@@ -14,6 +14,7 @@
   --color-wevol-grad-2: #fdc18f;
   --color-wevol-gray: #383838;
   --color-wevol-light: #d9d9d9;
+  --color-wevol-line: #272727;
 
   --font-sans: 'Instrument Sans Variable', 'Instrument Sans', system-ui, sans-serif;
   --font-serif-alt: 'Instrument Serif', Georgia, serif;
@@ -122,5 +123,10 @@
   /* GSAP: elements start hidden only when JS is available (no-JS fallback stays visible) */
   .js [data-reveal-img] {
     opacity: 0;
+  }
+
+  /* Scroll lock while the mobile/tablet overlay menu is open */
+  .wv-menu-open {
+    overflow: hidden;
   }
 }
