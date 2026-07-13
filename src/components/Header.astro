@@ -183,10 +183,16 @@ const activeLabel = 'Home';
     }
   }
 
-  /* Tablet / mobile (<1280): subtle solid background on scroll for legibility */
+  /* Tablet / mobile (<1280): subtle solid background on scroll for legibility.
+     Adds inner horizontal padding so the logo/button don't hug the pill's own
+     rounded edges once it gains a solid background (the pill itself has no
+     padding-inline at rest — only the outer wv-container gutter). */
   @media (max-width: 1279px) {
     [data-header].is-scrolled .wv-bar {
+      padding-left: 20px;
+      padding-right: 20px;
       background-color: color-mix(in srgb, var(--color-wevol-black) 92%, transparent);
+      border-color: var(--color-wevol-line);
       backdrop-filter: blur(8px);
     }
   }
