@@ -26,6 +26,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Build com Astro
         uses: withastro/action@v3
+        with:
+          # Astro 7 exige Node >=22.12; a action usa Node 20 por padrão
+          node-version: 22
         # Project page felipe-brosa.github.io/wevol → serve no subcaminho /wevol
         # (o Pages foi habilitado em Settings → Pages → Source: GitHub Actions)
         env:
