@@ -1,0 +1,126 @@
+@import 'tailwindcss';
+
+/*
+  WEVOL design tokens — mapped from the Figma variables
+  (WEVOL Black/Off-white/Beige/Orange/Gradient, Instrument Sans/Serif type scale)
+*/
+@theme {
+  --color-wevol-black: #090909;
+  --color-wevol-ink: #000000;
+  --color-wevol-off-white: #fff6e5;
+  --color-wevol-beige: #c2b49f;
+  --color-wevol-orange: #ff3d00;
+  --color-wevol-grad-1: #fc815d;
+  --color-wevol-grad-2: #fdc18f;
+  --color-wevol-gray: #383838;
+  --color-wevol-light: #d9d9d9;
+
+  --font-sans: 'Instrument Sans Variable', 'Instrument Sans', system-ui, sans-serif;
+  --font-serif-alt: 'Instrument Serif', Georgia, serif;
+
+  /* Figma breakpoints: Mobile <1024 · Tablet ≥1024 · Desktop ≥1280 · Desktop Large ≥1440 */
+  --breakpoint-2xl: 1440px;
+
+  --animate-marquee: marquee 28s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+@layer base {
+  /* native smooth scroll removed — Lenis handles scrolling (anchors incluídos) */
+  body {
+    background-color: var(--color-wevol-black);
+    color: var(--color-wevol-off-white);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-wevol-orange);
+    color: var(--color-wevol-off-white);
+  }
+}
+
+@layer components {
+  /* Content container: 1608px max content + 32px side padding (matches Figma wrappers) */
+  .wv-container {
+    margin-inline: auto;
+    width: 100%;
+    max-width: calc(1608px + 2 * 32px);
+    padding-inline: 32px;
+  }
+
+  /* Titles: Instrument Sans 400, -2% tracking (Figma Title/Main) */
+  .wv-title {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  /* Alternate titles: Instrument Serif 400 (Figma Title/Alternate) */
+  .wv-title-alt {
+    font-family: var(--font-serif-alt);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  /* Primary button (button-lg-primary) + interaction states */
+  .wv-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 20px;
+    border-radius: 4px;
+    background: var(--color-wevol-grad-1);
+    color: var(--color-wevol-ink);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease,
+      transform 0.25s ease;
+  }
+  .wv-btn-primary:hover {
+    background: var(--color-wevol-orange);
+    color: var(--color-wevol-off-white);
+  }
+  .wv-btn-primary:active {
+    transform: scale(0.97);
+  }
+  .wv-btn-primary:focus-visible {
+    outline: 2px solid var(--color-wevol-orange);
+    outline-offset: 2px;
+  }
+
+  /* Text links */
+  .wv-link {
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+  .wv-link:hover {
+    color: var(--color-wevol-orange);
+  }
+  .wv-link:focus-visible {
+    outline: 2px solid var(--color-wevol-orange);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* GSAP: elements start hidden only when JS is available (no-JS fallback stays visible) */
+  .js [data-reveal-img] {
+    opacity: 0;
+  }
+}

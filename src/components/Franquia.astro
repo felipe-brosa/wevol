@@ -1,0 +1,69 @@
+---
+// Franchise band: off-white intro card + photo + animated "Seja um franqueado" card
+---
+
+<section class="bg-wevol-black py-24">
+  <div class="wv-container grid grid-cols-1 gap-3 lg:grid-cols-3">
+    <div class="flex min-h-[400px] flex-col justify-center rounded bg-wevol-off-white p-3 xl:h-[500px]">
+      <div class="flex flex-col gap-2 px-6 py-2">
+        <h2 class="wv-title text-[clamp(36px,3.13vw,60px)] text-wevol-ink" data-reveal="words">
+          <span class="flex items-center gap-5">
+            Leve a
+            <img
+              src="icons/wevol-logo-dark.svg"
+              alt="WEVOL"
+              class="h-[0.8em] w-auto translate-y-[0.05em]"
+            />
+          </span>
+          <span class="mt-1 block">para sua cidade.</span>
+        </h2>
+        <p
+          class="wv-title mt-2 max-w-[456px] text-[clamp(16px,1.05vw,20px)] leading-[1.25] tracking-[-0.02em] text-wevol-ink"
+          data-reveal="lines"
+        >
+          Conheça a oportunidade de fazer parte da expansão de uma marca que está transformando
+          saúde, performance e longevidade.
+        </p>
+      </div>
+    </div>
+
+    <img
+      src="images/franquia.png"
+      alt="Treino com tecnologia WEVOL"
+      class="h-[400px] w-full rounded object-cover xl:h-[500px]"
+      data-reveal-img
+    />
+
+    <a
+      href="#"
+      class="group relative flex min-h-[400px] flex-col items-end justify-between overflow-hidden rounded bg-gradient-to-l from-wevol-grad-1 to-wevol-grad-2 p-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-wevol-orange xl:h-[500px]"
+      data-franquia-cta
+    >
+      {/* hover: gradient fades into solid WEVOL Orange */}
+      <span
+        class="absolute inset-0 bg-wevol-orange opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
+        aria-hidden="true"
+      ></span>
+
+      <span class="relative block size-20 overflow-hidden" aria-hidden="true">
+        {/* arrow exits top-right, twin re-enters from bottom-left */}
+        <img
+          src="icons/franquia-arrow.svg"
+          alt=""
+          class="absolute inset-0 size-20 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-[110%] group-hover:translate-y-[-110%]"
+        />
+        <img
+          src="icons/franquia-arrow.svg"
+          alt=""
+          class="absolute inset-0 size-20 translate-x-[-110%] translate-y-[110%] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-0 group-hover:translate-y-0"
+        />
+      </span>
+
+      <span
+        class="wv-title relative w-full text-right text-[clamp(44px,3.75vw,72px)] leading-none text-wevol-ink transition-colors duration-500 group-hover:text-wevol-off-white"
+      >
+        Seja um franqueado
+      </span>
+    </a>
+  </div>
+</section>

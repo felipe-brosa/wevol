@@ -1,0 +1,46 @@
+---
+// Card "Mais do que tecnologia. Uma experiência completa." — straddles the gray → black boundary
+const features = [
+  'Treinos de apenas 20 minutos',
+  'Alta ativação muscular',
+  'Protocolos personalizados',
+  'Baixo impacto articular',
+  'Acompanhamento contínuo',
+  'Ecossistema completo de saúde, performance e longevidade',
+];
+---
+
+<section class="relative bg-wevol-black">
+  <div class="absolute inset-x-0 top-0 h-1/2 bg-wevol-light" aria-hidden="true"></div>
+
+  <div class="wv-container relative">
+    <div class="flex flex-col gap-8 rounded-xl bg-[#111] p-1 xl:flex-row xl:items-stretch">
+      <img
+        src="images/experiencia.png"
+        alt="Aluno treinando na WEVOL"
+        class="h-[320px] w-full rounded-lg object-cover sm:h-[420px] xl:h-[674px] xl:w-[779px]"
+        data-reveal-img
+      />
+
+      <div class="flex flex-1 flex-col justify-center gap-10 p-6">
+        <div class="flex flex-col gap-1 text-wevol-off-white">
+          <h2 class="wv-title text-[clamp(32px,3.13vw,60px)]" data-reveal="words">
+            Mais do que tecnologia.
+          </h2>
+          <p class="wv-title-alt text-[clamp(36px,3.75vw,72px)] leading-none tracking-[-0.02em]" data-reveal="words">
+            Uma experiência completa.
+          </p>
+        </div>
+
+        <ul class="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((feature) => (
+            <li class="flex flex-col gap-6">
+              <img src="icons/muscle.svg" alt="" aria-hidden="true" class="size-10" />
+              <p class="text-base text-wevol-off-white" data-reveal="lines">{feature}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

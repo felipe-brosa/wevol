@@ -1,0 +1,57 @@
+---
+// Full-width unit showcase with thumbnail selector overlay
+const slides = [
+  'images/unidade-store.png',
+  'images/unidade-thumb-1.png',
+  'images/unidade-thumb-2.png',
+  'images/unidade-thumb-1.png',
+  'images/unidade-thumb-2.png',
+];
+---
+
+<section class="bg-wevol-black px-8" data-unidade>
+  <div class="relative h-[420px] overflow-hidden rounded-lg sm:h-[600px] xl:h-[900px]">
+    <img
+      src={slides[0]}
+      alt="Unidade WEVOL"
+      class="size-full object-cover"
+      data-unidade-main
+      data-reveal-img
+    />
+
+    <div
+      class="absolute bottom-6 left-1/2 hidden w-[min(1048px,90%)] -translate-x-1/2 gap-2 rounded bg-wevol-beige p-2 lg:flex xl:bottom-10"
+    >
+      {slides.map((src, i) => (
+        <button
+          type="button"
+          class="group relative aspect-[600/400] min-w-0 flex-1 cursor-pointer overflow-hidden rounded focus-visible:outline-2 focus-visible:outline-wevol-orange"
+          aria-label={`Ver foto ${i + 1} da unidade`}
+          data-unidade-thumb={i === 0 ? 'active' : ''}
+        >
+          <img src={src} alt="" class="size-full object-cover transition-transform duration-300 group-hover:scale-105" />
+          <span
+            class="absolute inset-0 rounded bg-black/65 opacity-0 transition-opacity duration-300 [[data-unidade-thumb='active']_&]:opacity-100"
+            aria-hidden="true"
+          ></span>
+        </button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector('[data-unidade]');
+  if (root) {
+    const main = root.querySelector<HTMLImageElement>('[data-unidade-main]')!;
+    const thumbs = [...root.querySelectorAll<HTMLButtonElement>('[data-unidade-thumb]')];
+    thumbs.forEach((thumb) => {
+      thumb.addEventListener('click', () => {
+        thumbs.forEach((t) => t.setAttribute('data-unidade-thumb', ''));
+        thumb.setAttribute('data-unidade-thumb', 'active');
+        const img = thumb.querySelector('img');
+        if (img) main.src = img.src;
+      });
+    });
+  }
+</script>

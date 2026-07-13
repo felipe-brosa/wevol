@@ -1,0 +1,46 @@
+name: Deploy site to GitHub Pages
+
+on:
+  # Publica a cada push na branch principal
+  push:
+    branches: [main]
+  # Permite rodar manualmente pela aba "Actions" do GitHub
+  workflow_dispatch:
+
+# Permissões que o GitHub Pages exige
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Uma publicação por vez; não cancela um deploy em andamento
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build com Astro
+        uses: withastro/action@v3
+        # ────────────────────────────────────────────────────────────────
+        # SÓ para "project page" (usuario.github.io/repositorio):
+        # descomente as 3 linhas abaixo para servir no subcaminho do repo.
+        # Para usuario.github.io ou domínio próprio, deixe comentado.
+        # env:
+        #   BASE_PATH: /${{ github.event.repository.name }}
+        # ────────────────────────────────────────────────────────────────
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy para GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

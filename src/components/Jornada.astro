@@ -1,0 +1,169 @@
+---
+// Section "Uma jornada construída para a sua evolução." — tabs with auto-advance (finite, no loop)
+const steps = [
+  {
+    title: 'Avaliação Inicial',
+    image: 'images/tech-estacao.png',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vulputate sem eu dolor varius dapibus. Aliquam erat volutpat. Sed ut tellus quis felis condimentum gravida nec at dui. Cras et venenatis lectus.',
+  },
+  {
+    title: 'Escaneamento Corporal',
+    image: 'images/tech-ems.png',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vulputate sem eu dolor varius dapibus. Aliquam erat volutpat. Sed ut tellus quis felis condimentum gravida nec at dui. Cras et venenatis lectus.',
+  },
+  {
+    title: 'BioTriagem',
+    image: 'images/tab-biotriagem.png',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vulputate sem eu dolor varius dapibus. Aliquam erat volutpat. Sed ut tellus quis felis condimentum gravida nec at dui. Cras et venenatis lectus.',
+  },
+  {
+    title: 'Planejamento Personalizado',
+    image: 'images/tab-planejamento.png',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vulputate sem eu dolor varius dapibus. Aliquam erat volutpat. Sed ut tellus quis felis condimentum gravida nec at dui. Cras et venenatis lectus.',
+  },
+  {
+    title: 'Treino Inteligente',
+    image: 'images/historia-2.png',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vulputate sem eu dolor varius dapibus. Aliquam erat volutpat. Sed ut tellus quis felis condimentum gravida nec at dui. Cras et venenatis lectus.',
+  },
+  {
+    title: 'Evolução Contínua',
+    image: 'images/historia-5.png',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vulputate sem eu dolor varius dapibus. Aliquam erat volutpat. Sed ut tellus quis felis condimentum gravida nec at dui. Cras et venenatis lectus.',
+  },
+];
+---
+
+<section class="relative overflow-hidden bg-wevol-black pb-40 pt-24" data-jornada>
+  <div class="wv-container">
+    <h2
+      class="wv-title max-w-[1396px] text-[clamp(40px,3.75vw,72px)] text-wevol-off-white"
+      data-reveal="words"
+    >
+      Uma jornada construída para a sua evolução.
+    </h2>
+  </div>
+
+  <div class="wv-container mt-24 grid grid-cols-1 gap-16 lg:grid-cols-[470px_1fr]">
+    <div>
+      <p class="max-w-[446px] text-base text-wevol-off-white" data-reveal="lines">
+        Cada etapa prepara a próxima para que a evolução aconteça de forma integrada.
+      </p>
+
+      <ol class="mt-8 flex flex-col" role="tablist" aria-label="Etapas da jornada WEVOL">
+        {steps.map((step, i) => (
+          <li class="relative flex items-center gap-4">
+            {/* timeline: dot + connector */}
+            <span class="relative flex h-[70px] w-3 shrink-0 flex-col items-center">
+              <span
+                class="size-3 rounded-full bg-wevol-gray transition-colors duration-300 [.is-active_&]:bg-wevol-orange"
+                data-jornada-dot
+              ></span>
+              {i < steps.length - 1 && (
+                <span class="mt-1 w-px flex-1 bg-wevol-gray/70"></span>
+              )}
+            </span>
+            <button
+              type="button"
+              role="tab"
+              id={`jornada-tab-${i}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              aria-controls={`jornada-panel-${i}`}
+              class="wv-title -mt-8 cursor-pointer text-left text-[clamp(22px,1.6vw,30px)] leading-[1.25] text-wevol-off-white transition-colors duration-300 hover:text-wevol-orange/80 focus-visible:outline-2 focus-visible:outline-wevol-orange aria-selected:text-wevol-orange"
+              data-jornada-tab={i}
+            >
+              {step.title}
+            </button>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="relative -mr-8 overflow-hidden lg:-mr-[max(32px,calc((100vw-1672px)/2+32px))]" data-jornada-viewport>
+      <div class="flex gap-6 will-change-transform" data-jornada-strip>
+        {steps.map((step, i) => (
+          <article
+            role="tabpanel"
+            id={`jornada-panel-${i}`}
+            aria-labelledby={`jornada-tab-${i}`}
+            class="relative flex h-[420px] w-[min(85vw,560px)] shrink-0 flex-col justify-end gap-2.5 overflow-hidden rounded p-8 xl:h-[534px] xl:w-[760px]"
+          >
+            <img src={step.image} alt="" class="absolute inset-0 size-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/0" aria-hidden="true"></div>
+            <h3 class="wv-title relative text-2xl leading-[1.25] tracking-[-0.02em] text-wevol-off-white">
+              {step.title}
+            </h3>
+            <p class="relative max-w-[600px] text-base text-wevol-off-white">{step.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Finite auto-advancing tabs: strip slides left per step, clamped so it never
+  // over-scrolls past the last card (no loop back to the start).
+  const root = document.querySelector('[data-jornada]');
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-jornada-tab]')];
+    const items = tabs.map((t) => t.closest('li')!);
+    const strip = root.querySelector<HTMLElement>('[data-jornada-strip]')!;
+    const viewport = root.querySelector<HTMLElement>('[data-jornada-viewport]')!;
+    const AUTO_MS = 4000;
+    let current = 0;
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    const maxOffset = () => Math.max(0, strip.scrollWidth - viewport.clientWidth);
+    const stepOffset = (i: number) => {
+      const cards = strip.children;
+      if (!cards[i]) return 0;
+      return Math.min((cards[i] as HTMLElement).offsetLeft, maxOffset());
+    };
+
+    function activate(i: number) {
+      current = i;
+      tabs.forEach((tab, j) => {
+        tab.setAttribute('aria-selected', j === i ? 'true' : 'false');
+        items[j].classList.toggle('is-active', j === i);
+      });
+      strip.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
+      strip.style.transform = `translateX(-${stepOffset(i)}px)`;
+    }
+
+    function startAuto() {
+      stopAuto();
+      timer = setInterval(() => {
+        if (current < tabs.length - 1) {
+          activate(current + 1);
+        } else {
+          stopAuto(); // finite: stops after the last tab, no loop
+        }
+      }, AUTO_MS);
+    }
+    function stopAuto() {
+      if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    tabs.forEach((tab, i) =>
+      tab.addEventListener('click', () => {
+        activate(i);
+        startAuto(); // user interaction resets the pacing
+      })
+    );
+
+    activate(0);
+
+    // start auto-advance only when the section is visible
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => (e.isIntersecting ? startAuto() : stopAuto()));
+      },
+      { threshold: 0.35 }
+    );
+    io.observe(root);
+
+    window.addEventListener('resize', () => activate(current));
+  }
+</script>

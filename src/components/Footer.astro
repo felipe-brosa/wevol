@@ -1,0 +1,81 @@
+---
+// Beige footer: logo, newsletter, socials, nav links with dividers, legal bar
+const links = [
+  'Sobre',
+  'Tecnologias',
+  'Experiência',
+  'Unidades',
+  'Blog',
+  'Contato',
+  'Seja um franqueado',
+];
+---
+
+<footer class="bg-wevol-beige text-wevol-ink">
+  <div class="wv-container flex flex-col gap-16 pb-8 pt-14 lg:flex-row lg:justify-between">
+    <div class="flex max-w-[656px] flex-col gap-14">
+      <img src="icons/wevol-logo-dark.svg" alt="WEVOL" class="h-auto w-[min(447px,100%)]" />
+
+      <div class="flex flex-col gap-3">
+        <p class="wv-title-alt text-3xl">Cadastre-se em nossa newsletter</p>
+        <form class="flex flex-col gap-3 sm:flex-row" action="#" method="post">
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="Digite seu endereço de e-mail principal"
+            class="w-full rounded border border-wevol-ink bg-transparent p-3 text-lg leading-7 text-wevol-ink placeholder:text-wevol-ink/30 transition-colors focus:border-wevol-orange focus:outline-none sm:w-[347px]"
+          />
+          <button
+            type="submit"
+            class="cursor-pointer rounded bg-wevol-ink px-5 py-3 text-lg font-medium leading-7 text-wevol-off-white transition-colors hover:bg-wevol-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-wevol-orange"
+          >
+            Cadastrar
+          </button>
+        </form>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a href="#" class="wv-link" aria-label="Facebook da WEVOL">
+          <svg viewBox="0 0 32 32" class="size-8" fill="currentColor" aria-hidden="true">
+            <path
+              d="M29.3332 16.0003C29.3332 8.64033 23.3598 2.66699 15.9998 2.66699C8.63984 2.66699 2.6665 8.64033 2.6665 16.0003C2.6665 22.4537 7.25317 27.827 13.3332 29.067V20.0003H10.6665V16.0003H13.3332V12.667C13.3332 10.0937 15.4265 8.00033 17.9998 8.00033H21.3332V12.0003H18.6665C17.9332 12.0003 17.3332 12.6003 17.3332 13.3337V16.0003H21.3332V20.0003H17.3332V29.267C24.0665 28.6003 29.3332 22.9203 29.3332 16.0003Z"
+            />
+          </svg>
+        </a>
+        <a href="#" class="wv-link" aria-label="Instagram da WEVOL">
+          <svg viewBox="40 0 32 32" class="size-8" fill="currentColor" aria-hidden="true">
+            <path
+              d="M50.3998 2.66699H61.5998C65.8665 2.66699 69.3332 6.13366 69.3332 10.4003V21.6003C69.3332 23.6513 68.5184 25.6183 67.0681 27.0686C65.6178 28.5189 63.6508 29.3337 61.5998 29.3337H50.3998C46.1332 29.3337 42.6665 25.867 42.6665 21.6003V10.4003C42.6665 8.34932 43.4813 6.38231 44.9315 4.93203C46.3818 3.48175 48.3488 2.66699 50.3998 2.66699ZM50.1332 5.33366C48.8601 5.33366 47.6392 5.83937 46.7391 6.73955C45.8389 7.63972 45.3332 8.86062 45.3332 10.1337V21.867C45.3332 24.5203 47.4798 26.667 50.1332 26.667H61.8665C63.1395 26.667 64.3604 26.1613 65.2606 25.2611C66.1608 24.3609 66.6665 23.14 66.6665 21.867V10.1337C66.6665 7.48033 64.5198 5.33366 61.8665 5.33366H50.1332ZM62.9998 7.33366C63.4419 7.33366 63.8658 7.50925 64.1783 7.82181C64.4909 8.13437 64.6665 8.5583 64.6665 9.00033C64.6665 9.44235 64.4909 9.86628 64.1783 10.1788C63.8658 10.4914 63.4419 10.667 62.9998 10.667C62.5578 10.667 62.1339 10.4914 61.8213 10.1788C61.5088 9.86628 61.3332 9.44235 61.3332 9.00033C61.3332 8.5583 61.5088 8.13437 61.8213 7.82181C62.1339 7.50925 62.5578 7.33366 62.9998 7.33366ZM55.9998 9.33366C57.7679 9.33366 59.4636 10.036 60.7139 11.2863C61.9641 12.5365 62.6665 14.2322 62.6665 16.0003C62.6665 17.7684 61.9641 19.4641 60.7139 20.7144C59.4636 21.9646 57.7679 22.667 55.9998 22.667C54.2317 22.667 52.536 21.9646 51.2858 20.7144C50.0355 19.4641 49.3332 17.7684 49.3332 16.0003C49.3332 14.2322 50.0355 12.5365 51.2858 11.2863C52.536 10.036 54.2317 9.33366 55.9998 9.33366ZM55.9998 12.0003C54.939 12.0003 53.9216 12.4218 53.1714 13.1719C52.4213 13.922 51.9998 14.9395 51.9998 16.0003C51.9998 17.0612 52.4213 18.0786 53.1714 18.8288C53.9216 19.5789 54.939 20.0003 55.9998 20.0003C57.0607 20.0003 58.0781 19.5789 58.8283 18.8288C59.5784 18.0786 59.9998 17.0612 59.9998 16.0003C59.9998 14.9395 59.5784 13.922 58.8283 13.1719C58.0781 12.4218 57.0607 12.0003 55.9998 12.0003Z"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <nav class="w-full lg:max-w-[656px]" aria-label="Links do rodapé">
+      <ul>
+        {links.map((label) => (
+          <li class="border-b border-wevol-ink/60 last:border-b-0">
+            <a
+              href="#"
+              class="wv-title wv-link block py-3 text-[clamp(24px,1.9vw,36px)] leading-[1.25] tracking-[-0.02em]"
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  <div class="wv-container flex flex-col gap-4 pb-8 pt-16 text-base font-medium sm:flex-row sm:items-center sm:justify-between">
+    <p>2026 © WEVOL. Todos os direitos reservados.</p>
+    <a href="#" class="wv-link">Política de Privacidade</a>
+    <a href="#" class="wv-link">Configurações de cookies</a>
+    <p class="flex items-center gap-1.5">
+      Desenvolvido por
+      <img src="icons/perfomax.svg" alt="Perfomax" class="h-[18px] w-[114px]" />
+    </p>
+  </div>
+</footer>

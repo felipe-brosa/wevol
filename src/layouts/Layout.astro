@@ -1,0 +1,42 @@
+---
+import '@fontsource-variable/instrument-sans';
+import '@fontsource/instrument-serif';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'WEVOL — Evolução da saúde e performance',
+  description =
+    'Muito mais do que um treino. A WEVOL integra tecnologia, inteligência e acompanhamento personalizado para criar uma experiência única de evolução humana.',
+} = Astro.props;
+
+// <base> só resolve URLs relativas como diretório se terminar em "/"
+const rawBase = import.meta.env.BASE_URL;
+const baseHref = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    {/* base must come first so every relative URL below (and all asset paths)
+        resolves against the deploy path — '/' locally, '/repo/' on Pages subpaths */}
+    <base href={baseHref} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script is:inline>
+      // marks JS availability so reveal targets can start hidden (no-JS keeps content visible)
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

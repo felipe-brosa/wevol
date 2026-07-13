@@ -1,0 +1,43 @@
+---
+// "A WEVOL acompanha diferentes objetivos" — heading with inline logo + objectives row
+const objetivos = [
+  'Emagrecimento',
+  'Ganho de Massa',
+  'Performance Esportiva',
+  'Qualidade de Vida',
+  'Longevidade',
+  'Recuperação Física.',
+];
+---
+
+<section class="bg-wevol-black py-24">
+  <div class="wv-container flex flex-col items-center gap-16">
+    <h2
+      class="wv-title flex flex-wrap items-center justify-center gap-5 text-center text-[clamp(28px,2.5vw,48px)] leading-none text-wevol-off-white"
+      data-reveal="words"
+    >
+      <span>A</span>
+      <img
+        src="icons/wevol-logo-light.svg"
+        alt="WEVOL"
+        class="h-[1em] w-auto translate-y-[0.06em]"
+      />
+      <span>acompanha diferentes objetivos</span>
+    </h2>
+
+    <ul class="flex w-full flex-wrap items-center justify-center gap-x-8 gap-y-4 lg:justify-between lg:gap-0">
+      {objetivos.map((obj, i) => (
+        <>
+          {i > 0 && (
+            <li aria-hidden="true" class="hidden lg:block">
+              <img src="icons/asterisk.svg" alt="" class="size-[30px]" />
+            </li>
+          )}
+          <li class="wv-title text-[clamp(18px,1.25vw,24px)] leading-[1.25] text-wevol-off-white">
+            {obj}
+          </li>
+        </>
+      ))}
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,33 @@
+---
+// "Histórias reais. Evoluções reais." — arc of photo cards, tallest at center
+const cards = [
+  { src: 'images/historia-1.png', w: 300, h: 483 },
+  { src: 'images/historia-2.png', w: 320, h: 516 },
+  { src: 'images/historia-3.png', w: 340, h: 548 },
+  { src: 'images/historia-4.png', w: 360, h: 581 },
+  { src: 'images/historia-5.png', w: 340, h: 548 },
+  { src: 'images/historia-6.png', w: 320, h: 516 },
+  { src: 'images/historia-1.png', w: 300, h: 483 },
+];
+---
+
+<section class="overflow-hidden bg-wevol-black py-24">
+  <h2
+    class="wv-title mx-auto max-w-[806px] px-8 text-center text-[clamp(32px,2.5vw,48px)] leading-[1.25] text-wevol-off-white"
+    data-reveal="words"
+  >
+    Histórias reais. Evoluções reais.
+  </h2>
+
+  <div class="mt-20 flex items-center justify-center gap-3">
+    {cards.map((card) => (
+      <img
+        src={card.src}
+        alt="Aluno WEVOL"
+        class="shrink-0 rounded object-cover"
+        style={`width:${card.w}px;height:${card.h}px;`}
+        data-reveal-img
+      />
+    ))}
+  </div>
+</section>

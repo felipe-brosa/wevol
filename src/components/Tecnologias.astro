@@ -1,0 +1,69 @@
+---
+// Marquee band "A NOVA ERA DO TREINO INTELIGENTE" + technologies grid (light gray band)
+const techs = [
+  { title: 'WEVOL EMS', image: 'images/tech-ems.png' },
+  { title: 'Estação Inteligente', image: 'images/tech-estacao.png' },
+  { title: 'M30', image: 'images/tech-m30.png' },
+  { title: 'S-Drive', image: 'images/tech-sdrive.png' },
+  { title: 'NeuroSculpt', image: 'images/tech-m30.png' },
+  { title: 'BioTriagem', image: 'images/tech-biotriagem.png' },
+  { title: 'InfraSpa', image: 'images/tech-infraspa.png' },
+  { title: 'Creator 600', image: 'images/tech-ems.png' },
+];
+const pill = 'A NOVA ERA DO TREINO INTELIGENTE';
+---
+
+<section class="relative bg-wevol-light">
+  {/* pills straddling the black → gray boundary */}
+  <div class="relative flex -translate-y-1/2 justify-center" aria-hidden="true">
+    <div class="absolute top-[-57px] hidden h-[104px] w-[600px] rounded-full bg-[#111]/70 lg:block"></div>
+    <div class="relative flex h-[72px] items-center overflow-hidden rounded-full bg-wevol-black px-4 lg:h-[104px] lg:w-[660px] lg:justify-center lg:px-0">
+      <p class="wv-title whitespace-nowrap text-sm uppercase tracking-[0.6em] text-wevol-off-white">
+        {pill}
+      </p>
+    </div>
+  </div>
+
+  <img
+    src="icons/decor-tech.svg"
+    alt=""
+    aria-hidden="true"
+    class="pointer-events-none absolute bottom-0 left-0 hidden max-h-[70%] xl:block"
+  />
+
+  <div class="wv-container relative pb-24 pt-10">
+    <h2
+      class="wv-title mx-auto max-w-[808px] text-center text-[clamp(32px,2.5vw,48px)] leading-none text-wevol-ink"
+      data-reveal="words"
+    >
+      A inteligência por trás da sua evolução.
+    </h2>
+
+    <div class="mt-24 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      {techs.map((tech) => (
+        <a
+          href="#"
+          class="group relative flex h-[320px] flex-col justify-end overflow-hidden rounded px-5 py-6 focus-visible:outline-2 focus-visible:outline-wevol-orange"
+        >
+          <img
+            src={tech.image}
+            alt={tech.title}
+            class="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
+            data-reveal-img
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/0 to-50%"
+            aria-hidden="true"
+          ></div>
+          <h3 class="wv-title relative text-2xl leading-[1.25] tracking-[-0.02em] text-white">
+            {tech.title}
+          </h3>
+        </a>
+      ))}
+    </div>
+
+    <div class="mt-16 flex justify-center">
+      <a href="#" class="wv-btn-primary">Conheça todas as tecnologias</a>
+    </div>
+  </div>
+</section>

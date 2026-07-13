@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import CorpoUnico from '../components/CorpoUnico.astro';
+import Jornada from '../components/Jornada.astro';
+import Tecnologias from '../components/Tecnologias.astro';
+import Experiencia from '../components/Experiencia.astro';
+import Objetivos from '../components/Objetivos.astro';
+import UnidadeCarousel from '../components/UnidadeCarousel.astro';
+import Franquia from '../components/Franquia.astro';
+import Localizador from '../components/Localizador.astro';
+import Historias from '../components/Historias.astro';
+import Blog from '../components/Blog.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout>
+  <Header />
+  <main>
+    <Hero />
+    <CorpoUnico />
+    <Jornada />
+    <Tecnologias />
+    <Experiencia />
+    <Objetivos />
+    <UnidadeCarousel />
+    <Franquia />
+    <Localizador />
+    <Historias />
+    <Blog />
+    <CtaFinal />
+  </main>
+  <Footer />
+
+  <script>
+    import '../scripts/animations';
+  </script>
+</Layout>

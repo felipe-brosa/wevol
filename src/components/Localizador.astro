@@ -1,0 +1,87 @@
+---
+// Unit locator: search input + results list + Brazil map (placeholder data)
+const unidades = Array.from({ length: 6 }, (_, i) => ({
+  numero: i + 1,
+  nome: 'Wevol Moema - São Paulo/SP',
+  endereco: 'Avenida Ibirapuera, 2907, Conjunto 1614',
+}));
+---
+
+<section class="bg-wevol-black py-24">
+  <div class="wv-container">
+    <h2
+      class="wv-title max-w-[801px] text-[clamp(32px,2.5vw,48px)] leading-[1.25] text-wevol-off-white"
+      data-reveal="words"
+    >
+      Encontre a unidade mais próxima de você
+    </h2>
+
+    <div class="mt-20 flex flex-col items-start gap-16 xl:flex-row xl:items-center">
+      <div class="flex w-full flex-col gap-6 xl:w-[636px] xl:shrink-0">
+        <div class="flex flex-col gap-2">
+          <label
+            for="busca-cidade"
+            class="wv-title text-xl leading-[1.25] tracking-[-0.02em] text-wevol-off-white"
+          >
+            Busque pela sua cidade
+          </label>
+          <div class="flex flex-col gap-2 sm:flex-row">
+            <input
+              id="busca-cidade"
+              type="text"
+              placeholder="Digite o nome da cidade (ex.: São Paulo)"
+              class="min-w-0 flex-1 rounded-lg border border-wevol-beige bg-white/10 p-3 text-base text-wevol-off-white placeholder:text-wevol-off-white/40 transition-colors focus:border-wevol-orange focus:outline-none"
+            />
+            <button
+              type="button"
+              class="flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg bg-wevol-beige px-4 py-3 text-base text-wevol-ink transition-colors hover:bg-wevol-orange hover:text-wevol-off-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-wevol-orange"
+            >
+              Usar minha localização
+              <img src="icons/location.svg" alt="" aria-hidden="true" class="size-6" />
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-stretch gap-6">
+          <ul class="flex max-h-[453px] flex-1 flex-col gap-4 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {unidades.map((u, i) => (
+              <>
+                {i > 0 && <li class="h-px shrink-0 bg-wevol-gray" aria-hidden="true"></li>}
+                <li class="flex shrink-0 items-center gap-3">
+                  <span class="flex size-10 shrink-0 items-center justify-center rounded bg-wevol-beige text-2xl font-medium text-wevol-ink">
+                    {u.numero}
+                  </span>
+                  <span class="flex min-w-0 flex-col text-base">
+                    <span class="truncate font-medium text-white">{u.nome}</span>
+                    <span class="truncate text-white/90">{u.endereco}</span>
+                  </span>
+                  <a
+                    href="#"
+                    class="wv-link ml-auto flex shrink-0 items-center gap-1 text-base text-wevol-beige"
+                  >
+                    Ver rotas
+                    <img src="icons/arrow-right.svg" alt="" aria-hidden="true" class="size-6" />
+                  </a>
+                </li>
+              </>
+            ))}
+          </ul>
+
+          {/* decorative scroll rail (matches Figma) */}
+          <div class="flex w-1 justify-center rounded bg-white/10 py-1" aria-hidden="true">
+            <div class="h-[120px] w-1 rounded-full bg-wevol-beige"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative w-full flex-1 overflow-hidden rounded-2xl bg-white/5">
+        <img
+          src="images/mapa-brasil.png"
+          alt="Mapa do Brasil com unidades WEVOL"
+          class="w-full object-cover"
+          data-reveal-img
+        />
+      </div>
+    </div>
+  </div>
+</section>

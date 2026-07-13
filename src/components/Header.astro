@@ -1,0 +1,56 @@
+---
+const links = [
+  'Home',
+  'Sobre',
+  'Tecnologias',
+  'Experiência',
+  'Unidades',
+  'Blog',
+  'Contato',
+  'Seja um franqueado',
+];
+---
+
+<header class="absolute inset-x-0 top-0 z-50">
+  <div class="wv-container flex items-center justify-between py-[25px]">
+    <a href="#" class="wv-link shrink-0" aria-label="WEVOL — página inicial">
+      <img src="icons/wevol-logo-light.svg" alt="WEVOL" class="h-[23px] w-[92px]" />
+    </a>
+
+    <nav class="hidden items-center gap-4 text-base text-wevol-off-white lg:flex" aria-label="Navegação principal">
+      {links.map((label) => (
+        <a href="#" class="wv-link whitespace-nowrap">{label}</a>
+      ))}
+    </nav>
+
+    <button
+      type="button"
+      class="wv-link flex flex-col gap-1.5 p-2 lg:hidden"
+      aria-label="Abrir menu"
+      data-menu-toggle
+    >
+      <span class="block h-0.5 w-6 bg-wevol-off-white transition-transform"></span>
+      <span class="block h-0.5 w-6 bg-wevol-off-white transition-opacity"></span>
+      <span class="block h-0.5 w-6 bg-wevol-off-white transition-transform"></span>
+    </button>
+  </div>
+
+  <div
+    class="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-8 bg-wevol-black/95 text-2xl lg:hidden"
+    data-menu-panel
+  >
+    {links.map((label) => (
+      <a href="#" class="wv-link">{label}</a>
+    ))}
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('[data-menu-toggle]');
+  const panel = document.querySelector('[data-menu-panel]');
+  toggle?.addEventListener('click', () => {
+    const open = panel?.classList.toggle('hidden');
+    panel?.classList.toggle('flex', !open);
+    toggle.setAttribute('aria-label', open ? 'Abrir menu' : 'Fechar menu');
+  });
+</script>
