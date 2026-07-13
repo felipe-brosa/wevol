@@ -115,14 +115,16 @@ const activeLabel = 'Home';
     gap: 16px;
     border: 1px solid transparent;
     border-radius: 8px;
+    margin-top: 0;
     padding: 25px 0;
     background-color: transparent;
     transition:
-      max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-      padding 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-      background-color 0.4s ease,
-      border-color 0.4s ease,
-      backdrop-filter 0.4s ease;
+      max-width 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+      padding 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+      margin-top 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.55s ease,
+      border-color 0.55s ease,
+      backdrop-filter 0.55s ease;
   }
 
   .wv-logo {
@@ -131,14 +133,14 @@ const activeLabel = 'Home';
     height: 32px;
     width: 92px;
     flex-shrink: 0;
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .wv-logo img {
     position: absolute;
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    transition: opacity 0.3s ease;
+    transition: opacity 0.45s ease;
   }
   .wv-logo-full {
     height: 23px;
@@ -154,6 +156,7 @@ const activeLabel = 'Home';
   @media (min-width: 1024px) {
     [data-header].is-scrolled .wv-bar {
       max-width: var(--bar-compact, 820px);
+      margin-top: 16px;
       padding: 8px 24px 8px 12px;
       background-color: color-mix(in srgb, var(--color-wevol-black) 90%, transparent);
       border-color: var(--color-wevol-line);
@@ -242,7 +245,7 @@ const activeLabel = 'Home';
 
   // Distance (px) the user must scroll down — measured from each direction
   // change — before the bar hides. Scrolling up brings it straight back.
-  const HIDE_AFTER = 140;
+  const HIDE_AFTER = 280;
   let lastY = window.scrollY;
   let anchorY = window.scrollY;
   let goingDown = false;
