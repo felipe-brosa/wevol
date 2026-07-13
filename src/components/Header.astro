@@ -20,6 +20,7 @@ const activeLabel = 'Home';
         {desktopLinks.map((label) => (
           <a
             href="#"
+            aria-current={label === activeLabel ? 'page' : undefined}
             class:list={['wv-link', label === activeLabel ? 'text-wevol-grad-1' : 'text-wevol-off-white']}
           >
             {label}
@@ -71,6 +72,7 @@ const activeLabel = 'Home';
             <a
               href="#"
               data-menu-item
+              aria-current={label === activeLabel ? 'page' : undefined}
               class:list={[
                 'wv-link wv-title block leading-[1.25] text-2xl sm:text-4xl',
                 label === activeLabel ? 'text-wevol-grad-1' : 'text-wevol-off-white',
@@ -93,6 +95,16 @@ const activeLabel = 'Home';
 </div>
 
 <style>
+  /* Header slides out of view on scroll-down, back in on scroll-up */
+  [data-header] {
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+  [data-header].is-hidden {
+    transform: translateY(-140%);
+    pointer-events: none;
+  }
+
   /* ── Desktop bar: morphs into a compact centered pill on scroll ────────── */
   .wv-bar {
     margin-inline: auto;
@@ -228,8 +240,40 @@ const activeLabel = 'Home';
     bar.style.setProperty('--bar-compact', `${compact}px`);
   }
 
+  // Distance (px) the user must scroll down — measured from each direction
+  // change — before the bar hides. Scrolling up brings it straight back.
+  const HIDE_AFTER = 140;
+  let lastY = window.scrollY;
+  let anchorY = window.scrollY;
+  let goingDown = false;
+
   function onScroll() {
-    header?.classList.toggle('is-scrolled', window.scrollY > 32);
+    if (!header) return;
+    const y = window.scrollY;
+    const delta = y - lastY;
+
+    // Compact pill appears as soon as the user leaves the very top
+    header.classList.toggle('is-scrolled', y > 16);
+
+    // Hide-on-scroll-down / show-on-scroll-up (desktop only)
+    if (window.innerWidth >= 1024) {
+      if (Math.abs(delta) > 3) {
+        const nowDown = delta > 0;
+        if (nowDown !== goingDown) {
+          goingDown = nowDown;
+          anchorY = y; // reset the travel anchor on each direction change
+        }
+        if (goingDown) {
+          if (y - anchorY > HIDE_AFTER && y > 80) header.classList.add('is-hidden');
+        } else {
+          header.classList.remove('is-hidden');
+        }
+      }
+    } else {
+      header.classList.remove('is-hidden');
+    }
+
+    lastY = y;
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
