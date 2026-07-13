@@ -24,6 +24,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Configurar (e habilitar) GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Build com Astro
         uses: withastro/action@v3
         # Project page felipe-brosa.github.io/wevol → serve no subcaminho /wevol
