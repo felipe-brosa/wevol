@@ -30,15 +30,18 @@ const activeLabel = 'Home';
 
       <button
         type="button"
-        class="wv-link flex flex-col gap-1.5 p-2 lg:hidden"
+        class="wv-link flex items-center gap-2 p-2 text-base text-wevol-off-white lg:hidden"
         aria-label="Abrir menu"
         aria-expanded="false"
         aria-controls="wv-menu"
         data-menu-toggle
       >
-        <span class="block h-0.5 w-6 bg-wevol-off-white"></span>
-        <span class="block h-0.5 w-6 bg-wevol-off-white"></span>
-        <span class="block h-0.5 w-6 bg-wevol-off-white"></span>
+        <span class="flex flex-col gap-1.5">
+          <span class="block h-0.5 w-6 bg-wevol-off-white"></span>
+          <span class="block h-0.5 w-6 bg-wevol-off-white"></span>
+          <span class="block h-0.5 w-6 bg-wevol-off-white"></span>
+        </span>
+        <span>Menu</span>
       </button>
     </div>
   </div>
@@ -105,26 +108,32 @@ const activeLabel = 'Home';
     pointer-events: none;
   }
 
-  /* ── Desktop bar: morphs into a compact centered pill on scroll ────────── */
+  /* ── Desktop bar: morphs into a compact centered pill on scroll ──────────
+     Only max-width and the horizontal padding animate, so the items glide all
+     the way to the centre and the background hugs their current extent at every
+     instant. The vertical size (margin-top + padding-block) switches instantly
+     and cancels out, so the pill keeps its final height from the start and the
+     content never jumps vertically. */
   .wv-bar {
     margin-inline: auto;
+    margin-top: 12px;
     display: flex;
     width: 100%;
+    max-width: var(--bar-expanded, 1608px);
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     border: 1px solid transparent;
     border-radius: 8px;
-    margin-top: 0;
-    padding: 25px 0;
+    padding: 12px 0;
     background-color: transparent;
     transition:
-      max-width 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-      padding 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-      margin-top 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-      background-color 0.55s ease,
-      border-color 0.55s ease,
-      backdrop-filter 0.55s ease;
+      max-width 0.8s cubic-bezier(0.33, 1, 0.68, 1),
+      padding-left 0.8s cubic-bezier(0.33, 1, 0.68, 1),
+      padding-right 0.8s cubic-bezier(0.33, 1, 0.68, 1),
+      background-color 0.4s ease,
+      border-color 0.4s ease,
+      backdrop-filter 0.4s ease;
   }
 
   .wv-logo {
@@ -133,14 +142,15 @@ const activeLabel = 'Home';
     height: 32px;
     width: 92px;
     flex-shrink: 0;
-    transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    /* Width swaps instantly (the logo "transforms" fast); its position is
+       animated by the surrounding bar shrinking toward the centre. */
   }
   .wv-logo img {
     position: absolute;
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    transition: opacity 0.45s ease;
+    transition: opacity 0.2s ease;
   }
   .wv-logo-full {
     height: 23px;
@@ -176,18 +186,28 @@ const activeLabel = 'Home';
   /* Tablet / mobile: subtle solid background on scroll for legibility */
   @media (max-width: 1023px) {
     [data-header].is-scrolled .wv-bar {
-      padding-block: 12px;
       background-color: color-mix(in srgb, var(--color-wevol-black) 92%, transparent);
       backdrop-filter: blur(8px);
     }
   }
 
-  /* ── Overlay menu panel ────────────────────────────────────────────────── */
+  /* ── Overlay menu (tablet / mobile) ─────────────────────────────────────── */
+  /* Container padding sets the gap between the panel and the screen edges —
+     larger on top so the panel clears the browser chrome. */
+  [data-menu] {
+    padding: 44px 16px 24px;
+  }
+  @media (min-width: 640px) {
+    [data-menu] {
+      padding: 56px 40px 40px;
+    }
+  }
+
   .wv-menu-panel {
     position: relative;
     display: flex;
-    height: 95vh;
-    width: 95vw;
+    width: 100%;
+    height: 100%;
     max-width: 1279px;
     flex-direction: column;
     align-items: center;
@@ -236,11 +256,17 @@ const activeLabel = 'Home';
   const bar = header?.querySelector<HTMLElement>('[data-bar]');
   const nav = bar?.querySelector<HTMLElement>('[data-nav]');
 
-  function measureCompact() {
-    if (!bar || !nav || window.innerWidth < 1024) return;
-    // stamp (32) + gap (16) + nav content + padding (12 + 24) + border (2)
-    const compact = 32 + 16 + nav.scrollWidth + 12 + 24 + 2;
-    bar.style.setProperty('--bar-compact', `${compact}px`);
+  function measureBar() {
+    if (!bar) return;
+    // Expanded max-width = wv-container content width, so the transition has a
+    // real length to animate from (transitioning from `none` would teleport).
+    const expanded = Math.min(window.innerWidth, 1672) - 64;
+    bar.style.setProperty('--bar-expanded', `${expanded}px`);
+    if (nav && window.innerWidth >= 1024) {
+      // stamp (32) + gap (16) + nav content + padding (12 + 24) + border (2)
+      const compact = 32 + 16 + nav.scrollWidth + 12 + 24 + 2;
+      bar.style.setProperty('--bar-compact', `${compact}px`);
+    }
   }
 
   // Distance (px) the user must scroll down — measured from each direction
@@ -280,12 +306,12 @@ const activeLabel = 'Home';
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', measureCompact);
+  window.addEventListener('resize', measureBar);
   onScroll();
   if (document.fonts?.ready) {
-    document.fonts.ready.then(measureCompact);
+    document.fonts.ready.then(measureBar);
   } else {
-    measureCompact();
+    measureBar();
   }
 
   // ── Overlay menu open / close ────────────────────────────────────────────
