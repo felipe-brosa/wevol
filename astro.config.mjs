@@ -10,8 +10,8 @@ const base = process.env.BASE_PATH || '/';
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: troque para a URL final do seu site (usado em sitemap/SEO/canonical).
-  site: 'https://SEU-USUARIO.github.io',
+  // felipe-brosa.github.io/wevol  → project page (subcaminho /wevol)
+  site: 'https://felipe-brosa.github.io',
   base,
   vite: {
     plugins: [tailwindcss()],

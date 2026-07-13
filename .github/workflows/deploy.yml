@@ -26,13 +26,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Build com Astro
         uses: withastro/action@v3
-        # ────────────────────────────────────────────────────────────────
-        # SÓ para "project page" (usuario.github.io/repositorio):
-        # descomente as 3 linhas abaixo para servir no subcaminho do repo.
-        # Para usuario.github.io ou domínio próprio, deixe comentado.
-        # env:
-        #   BASE_PATH: /${{ github.event.repository.name }}
-        # ────────────────────────────────────────────────────────────────
+        # Project page felipe-brosa.github.io/wevol → serve no subcaminho /wevol
+        env:
+          BASE_PATH: /wevol
 
   deploy:
     needs: build
