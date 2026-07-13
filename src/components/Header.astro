@@ -16,7 +16,7 @@ const activeLabel = 'Home';
         <img data-logo-stamp src="icons/wevol-stamp-light.svg" alt="" aria-hidden="true" class="wv-logo-stamp" />
       </a>
 
-      <nav data-nav class="hidden items-center gap-4 text-base whitespace-nowrap lg:flex" aria-label="Navegação principal">
+      <nav data-nav class="hidden items-center gap-4 text-base whitespace-nowrap xl:flex" aria-label="Navegação principal">
         {desktopLinks.map((label) => (
           <a
             href="#"
@@ -30,18 +30,18 @@ const activeLabel = 'Home';
 
       <button
         type="button"
-        class="wv-link flex items-center gap-2 p-2 text-base text-wevol-off-white lg:hidden"
+        class="wv-link flex items-center gap-2 p-2 text-base text-wevol-off-white xl:hidden"
         aria-label="Abrir menu"
         aria-expanded="false"
         aria-controls="wv-menu"
         data-menu-toggle
       >
-        <span class="flex flex-col gap-1.5">
-          <span class="block h-0.5 w-6 bg-wevol-off-white"></span>
-          <span class="block h-0.5 w-6 bg-wevol-off-white"></span>
-          <span class="block h-0.5 w-6 bg-wevol-off-white"></span>
-        </span>
         <span>Menu</span>
+        <span class="flex flex-col gap-1">
+          <span class="block h-0.5 w-5 bg-wevol-off-white"></span>
+          <span class="block h-0.5 w-5 bg-wevol-off-white"></span>
+          <span class="block h-0.5 w-5 bg-wevol-off-white"></span>
+        </span>
       </button>
     </div>
   </div>
@@ -51,17 +51,17 @@ const activeLabel = 'Home';
 <div
   id="wv-menu"
   data-menu
-  class="fixed inset-0 z-[60] hidden items-center justify-center lg:hidden"
+  class="fixed inset-0 z-[60] hidden items-center justify-center xl:hidden"
   aria-hidden="true"
 >
   <div data-menu-panel class="wv-menu-panel">
     <button type="button" class="wv-menu-close wv-link" aria-label="Fechar menu" data-menu-close>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-6 sm:size-8">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-6 md:size-8">
         <path d="M6 6l12 12M18 6L6 18" />
       </svg>
     </button>
 
-    <div class="flex w-full flex-1 flex-col items-center justify-center gap-16 sm:gap-24">
+    <div class="flex w-full flex-1 flex-col items-center justify-center gap-16 md:gap-24">
       <img
         data-menu-logo
         src="icons/wevol-logo-light.svg"
@@ -77,7 +77,7 @@ const activeLabel = 'Home';
               data-menu-item
               aria-current={label === activeLabel ? 'page' : undefined}
               class:list={[
-                'wv-link wv-title block leading-[1.25] text-2xl sm:text-4xl',
+                'wv-link wv-title block leading-[1.25] text-2xl md:text-4xl',
                 label === activeLabel ? 'text-wevol-grad-1' : 'text-wevol-off-white',
               ]}
             >
@@ -88,7 +88,7 @@ const activeLabel = 'Home';
         ))}
       </ul>
 
-      <div class="flex w-full items-center justify-between text-base font-medium text-wevol-off-white sm:justify-center sm:gap-24 sm:text-2xl">
+      <div class="flex w-full items-center justify-between text-base font-medium text-wevol-off-white md:justify-center md:gap-24 md:text-2xl">
         {footerLinks.map((label) => (
           <a href="#" data-menu-item class="wv-link whitespace-nowrap">{label}</a>
         ))}
@@ -162,8 +162,8 @@ const activeLabel = 'Home';
     opacity: 0;
   }
 
-  /* Desktop: the full pill morph */
-  @media (min-width: 1024px) {
+  /* Desktop (≥1280): the full pill morph */
+  @media (min-width: 1280px) {
     [data-header].is-scrolled .wv-bar {
       max-width: var(--bar-compact, 820px);
       margin-top: 16px;
@@ -183,8 +183,8 @@ const activeLabel = 'Home';
     }
   }
 
-  /* Tablet / mobile: subtle solid background on scroll for legibility */
-  @media (max-width: 1023px) {
+  /* Tablet / mobile (<1280): subtle solid background on scroll for legibility */
+  @media (max-width: 1279px) {
     [data-header].is-scrolled .wv-bar {
       background-color: color-mix(in srgb, var(--color-wevol-black) 92%, transparent);
       backdrop-filter: blur(8px);
@@ -197,7 +197,7 @@ const activeLabel = 'Home';
   [data-menu] {
     padding: 44px 16px 24px;
   }
-  @media (min-width: 640px) {
+  @media (min-width: 768px) {
     [data-menu] {
       padding: 56px 40px 40px;
     }
@@ -230,7 +230,7 @@ const activeLabel = 'Home';
     height: 48px;
     color: var(--color-wevol-off-white);
   }
-  @media (min-width: 640px) {
+  @media (min-width: 768px) {
     .wv-menu-close {
       width: 72px;
       height: 72px;
@@ -262,7 +262,7 @@ const activeLabel = 'Home';
     // real length to animate from (transitioning from `none` would teleport).
     const expanded = Math.min(window.innerWidth, 1672) - 64;
     bar.style.setProperty('--bar-expanded', `${expanded}px`);
-    if (nav && window.innerWidth >= 1024) {
+    if (nav && window.innerWidth >= 1280) {
       // stamp (32) + gap (16) + nav content + padding (12 + 24) + border (2)
       const compact = 32 + 16 + nav.scrollWidth + 12 + 24 + 2;
       bar.style.setProperty('--bar-compact', `${compact}px`);
@@ -270,36 +270,58 @@ const activeLabel = 'Home';
   }
 
   // Distance (px) the user must scroll down — measured from each direction
-  // change — before the bar hides. Scrolling up brings it straight back.
+  // change — before the bar may hide. Scrolling up brings it straight back.
   const HIDE_AFTER = 280;
+  // Once the bar appears/transforms it stays put for at least this long — even
+  // while scrolling down — before it is allowed to hide again.
+  const DWELL_MS = 2000;
+  const MORPH_MS = 800; // desktop pill morph duration
+  const SHOW_MS = 450; // slide-back-in duration
   let lastY = window.scrollY;
   let anchorY = window.scrollY;
   let goingDown = false;
+  let wasScrolled = false;
+  let hideLockedUntil = 0;
 
   function onScroll() {
     if (!header) return;
     const y = window.scrollY;
     const delta = y - lastY;
+    const now = performance.now();
+    const isDesktop = window.innerWidth >= 1280;
 
-    // Compact pill appears as soon as the user leaves the very top
-    header.classList.toggle('is-scrolled', y > 16);
+    // Compact pill (desktop) / solid background (tablet-mobile) forms just off
+    // the top. When it first forms, lock it visible through entry + dwell.
+    const nowScrolled = y > 16;
+    if (nowScrolled && !wasScrolled) {
+      hideLockedUntil = now + (isDesktop ? MORPH_MS : 0) + DWELL_MS;
+    }
+    wasScrolled = nowScrolled;
+    header.classList.toggle('is-scrolled', nowScrolled);
 
-    // Hide-on-scroll-down / show-on-scroll-up (desktop only)
-    if (window.innerWidth >= 1024) {
-      if (Math.abs(delta) > 3) {
-        const nowDown = delta > 0;
-        if (nowDown !== goingDown) {
-          goingDown = nowDown;
-          anchorY = y; // reset the travel anchor on each direction change
-        }
-        if (goingDown) {
-          if (y - anchorY > HIDE_AFTER && y > 80) header.classList.add('is-hidden');
-        } else {
-          header.classList.remove('is-hidden');
-        }
-      }
-    } else {
+    // At the very top the bar is always shown (expanded state)
+    if (!nowScrolled) {
       header.classList.remove('is-hidden');
+      lastY = y;
+      return;
+    }
+
+    // Hide on scroll-down / reappear on scroll-up, respecting the dwell lock
+    if (Math.abs(delta) > 3) {
+      const nowDown = delta > 0;
+      if (nowDown !== goingDown) {
+        goingDown = nowDown;
+        anchorY = y; // reset the travel anchor on each direction change
+      }
+      if (goingDown) {
+        if (y - anchorY > HIDE_AFTER && y > 80 && now >= hideLockedUntil) {
+          header.classList.add('is-hidden');
+        }
+      } else if (header.classList.contains('is-hidden')) {
+        // reappeared on scroll-up → lock it visible again before it may hide
+        header.classList.remove('is-hidden');
+        hideLockedUntil = now + SHOW_MS + DWELL_MS;
+      }
     }
 
     lastY = y;
