@@ -88,15 +88,25 @@
   }
 
   /*
-    Primary button (button-lg-primary) — "color-flip" hover.
-    An accent fill wipes up from the bottom while the label inverts, echoing the
-    Franquia CTA's motion (same smooth ease). Works on flat markup
-    (<a class="wv-btn-primary">Label</a>) — the fill lives on ::before, so no
-    nested spans are needed.
+    Primary button (button-lg-primary) — two-layer "color-flip".
+    Two stacked faces of the same label sit inside the button (overflow clipped):
+    a resting cream face and an accent orange face. On hover the cream face
+    scales down into the top edge while the orange face grows up from the bottom
+    with an elastic overshoot — reads as the bottom face pushing the top one out.
+    On press the whole thing tilts slightly. Adapted from the reference button to
+    the Wevol palette + the Franquia CTA's motion feel.
+
+    The faces are ::before / ::after and read the label from `data-label`, so the
+    markup stays a single anchor:
+      <a class="wv-btn-primary" data-label="Ver o blog">Ver o blog</a>
+    The real text is kept (transparent) so it still sizes the box and is read by
+    assistive tech / crawlers.
   */
   .wv-btn-primary {
+    --wv-flip-in: cubic-bezier(0.34, 1.56, 0.64, 1); /* overshoot = the bounce */
+    --wv-flip-out: cubic-bezier(0.6, 0, 0.3, 1);
     position: relative;
-    isolation: isolate; /* keep the fill behind the label, not behind the page */
+    isolation: isolate;
     overflow: hidden;
     display: inline-flex;
     align-items: center;
@@ -104,44 +114,67 @@
     padding: 8px 20px;
     border-radius: 4px;
     background: var(--color-wevol-grad-1);
-    color: var(--color-wevol-ink);
+    color: transparent; /* real label sizes the box + stays for a11y; faces cover it */
     font-size: 16px;
     line-height: 24px;
     font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
-    transition: color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.3s var(--wv-flip-out);
   }
-  /* the flipping fill — hidden below the button, wipes up on hover/focus */
-  .wv-btn-primary::before {
-    content: '';
+  /* the two stacked faces */
+  .wv-btn-primary::before,
+  .wv-btn-primary::after {
+    content: attr(data-label);
     position: absolute;
     inset: 0;
-    z-index: -1;
-    background: var(--color-wevol-orange);
-    transform: translateY(101%);
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: transform;
   }
-  .wv-btn-primary:hover,
-  .wv-btn-primary:focus-visible {
+  /* resting (cream) face — collapses into the top edge on hover */
+  .wv-btn-primary::before {
+    z-index: 1;
+    background: var(--color-wevol-grad-1);
+    color: var(--color-wevol-ink);
+    transform-origin: center top;
+    transition: transform 0.3s var(--wv-flip-out);
+  }
+  /* accent (orange) face — grows up from the bottom with a bounce */
+  .wv-btn-primary::after {
+    z-index: 2;
+    background: var(--color-wevol-orange);
     color: var(--color-wevol-off-white);
+    transform-origin: center bottom;
+    transform: scaleY(0);
+    transition: transform 0.5s var(--wv-flip-in);
   }
   .wv-btn-primary:hover::before,
   .wv-btn-primary:focus-visible::before {
-    transform: translateY(0);
+    transform: scaleY(0);
   }
+  .wv-btn-primary:hover::after,
+  .wv-btn-primary:focus-visible::after {
+    transform: scaleY(1);
+  }
+  /* pressed: a small playful tilt while the flip happens */
   .wv-btn-primary:active {
-    transform: scale(0.97);
+    transform: scale(0.98) rotate(-1.5deg);
   }
   .wv-btn-primary:focus-visible {
     outline: 2px solid var(--color-wevol-orange);
     outline-offset: 2px;
   }
-  /* motion-reduced: skip the wipe, keep the colour change instant */
+  /* motion-reduced: no scaling/tilt — the faces just swap */
   @media (prefers-reduced-motion: reduce) {
     .wv-btn-primary,
-    .wv-btn-primary::before {
+    .wv-btn-primary::before,
+    .wv-btn-primary::after {
       transition-duration: 0.01ms;
+    }
+    .wv-btn-primary:active {
+      transform: none;
     }
   }
 
