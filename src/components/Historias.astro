@@ -97,31 +97,35 @@ const VIDEO = 'videos/hero-placeholder.webm';
 <script>
   const root = document.querySelector<HTMLElement>('[data-historias]');
   if (root) {
+    const track = root.querySelector<HTMLElement>('[data-hist-track]')!;
     const cards = [...root.querySelectorAll<HTMLButtonElement>('[data-hist-card]')];
     const N = cards.length;
     const SCALE = [1, 0.944, 0.889];
     const OPACITY = [1, 0.6, 0.25];
-    let active = 0;
+    let busy = false;
 
     // Desktop (≥1280) shows two cards per side, tablet/mobile one.
     const range = () => (window.innerWidth >= 1280 ? 2 : 1);
 
-    // Signed offset from the active card, wrapped to the nearest direction so the
-    // carousel loops seamlessly (…-2 -1 0 1 2…).
-    const offsetOf = (i: number) => {
-      let off = ((i - active) % N + N) % N;
-      if (off > N / 2) off -= N;
-      return off;
-    };
+    // Continuous slot of every card (…-2 -1 0 1 2 3…). Unlike a wrapped offset,
+    // this preserves motion direction: a card leaving on the left slides to a more
+    // negative slot, then — while off-screen — is recycled to the far right so it
+    // can re-enter. That recycle is the only teleport and it is always invisible.
+    const curPos = cards.map((_, i) => {
+      let o = ((i % N) + N) % N;
+      if (o > N / 2) o -= N;
+      return o;
+    });
 
-    function place() {
+    function render(teleport?: Set<number>) {
       const r = range();
       const step = cards[0].offsetWidth * 0.972 + 12; // half center + gap + half neighbour
       cards.forEach((card, i) => {
-        const off = offsetOf(i);
+        const off = curPos[i];
         const abs = Math.abs(off);
         const visible = abs <= r;
         const scale = visible ? SCALE[abs] ?? 0.85 : 0.85;
+        if (teleport?.has(i)) card.style.transition = 'none';
         card.style.transform = `translate(-50%, -50%) translateX(${off * step}px) scale(${scale})`;
         card.style.opacity = visible ? String(OPACITY[abs] ?? 0) : '0';
         card.style.zIndex = String(10 - abs);
@@ -134,15 +138,55 @@ const VIDEO = 'videos/hero-placeholder.webm';
           card.classList.remove('is-playing');
         }
       });
+      // Commit any teleport instantly, then restore transitions for next moves.
+      if (teleport?.size) {
+        void track.offsetWidth; // reflow
+        teleport.forEach((i) => (cards[i].style.transition = ''));
+      }
+    }
+
+    // Shift the whole ribbon one slot. dir>0 moves it left ("next"), dir<0 right.
+    function shift(dir: number) {
+      const r = range();
+      // Recycle the spare that has fallen off the far side to the incoming edge,
+      // while it is off-screen, so it re-enters instead of sliding across.
+      const teleport = new Set<number>();
+      cards.forEach((_, i) => {
+        if (dir > 0 && curPos[i] <= -(r + 1)) {
+          curPos[i] += N;
+          teleport.add(i);
+        } else if (dir < 0 && curPos[i] >= r + 1) {
+          curPos[i] -= N;
+          teleport.add(i);
+        }
+      });
+      if (teleport.size) render(teleport);
+      cards.forEach((_, i) => (curPos[i] -= dir));
+      render();
+    }
+
+    // Bring card i to the centre, one slot at a time (nothing jumps across).
+    function goTo(i: number): boolean {
+      const off = curPos[i];
+      if (off === 0) return false; // already centred
+      if (busy) return true;
+      busy = true;
+      const dir = off > 0 ? 1 : -1;
+      let remaining = Math.abs(off);
+      // Wait a touch longer than the 0.55s slide so the exiting card is fully
+      // hidden before the next step recycles it (keeps the recycle invisible).
+      const tick = () => {
+        shift(dir);
+        if (--remaining > 0) setTimeout(tick, 580);
+        else busy = false;
+      };
+      tick();
+      return true;
     }
 
     cards.forEach((card, i) => {
       card.addEventListener('click', () => {
-        if (offsetOf(i) !== 0) {
-          active = i; // bring a side card to the centre
-          place();
-          return;
-        }
+        if (goTo(i)) return; // side card (or a move is already in progress)
         // centre card: toggle playback
         const v = card.querySelector('video');
         if (!v) return;
@@ -156,12 +200,13 @@ const VIDEO = 'videos/hero-placeholder.webm';
       });
     });
 
-    place();
+    const all = () => new Set(cards.map((_, i) => i));
+    render(all()); // initial placement, no animation
 
     let rt: ReturnType<typeof setTimeout>;
     window.addEventListener('resize', () => {
       clearTimeout(rt);
-      rt = setTimeout(place, 100);
+      rt = setTimeout(() => render(all()), 100);
     });
   }
 </script>
