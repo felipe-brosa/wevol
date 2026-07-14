@@ -25,8 +25,32 @@ const slides = [
       />
     ))}
 
+    {/* prev/next arrows — mobile only (desktop uses the thumbnails) */}
+    <button
+      type="button"
+      data-unidade-nav
+      data-unidade-prev
+      aria-label="Foto anterior"
+      class="absolute left-4 top-1/2 z-10 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-wevol-orange text-white transition-transform duration-200 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-wevol-orange lg:hidden"
+    >
+      <svg width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true">
+        <path d="M24 7H2M8 1 2 7l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+    <button
+      type="button"
+      data-unidade-nav
+      data-unidade-next
+      aria-label="Próxima foto"
+      class="absolute right-4 top-1/2 z-10 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-wevol-orange text-white transition-transform duration-200 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-wevol-orange lg:hidden"
+    >
+      <svg width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true">
+        <path d="M0 7h22M16 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+
     <div
-      class="absolute bottom-6 left-1/2 hidden w-[min(1048px,90%)] -translate-x-1/2 gap-2 rounded bg-wevol-beige p-2 lg:flex xl:bottom-10"
+      class="absolute bottom-6 left-1/2 flex w-[min(1048px,90%)] -translate-x-1/2 gap-2 rounded bg-wevol-beige p-2 xl:bottom-10"
     >
       {slides.map((src, i) => (
         <button
@@ -72,6 +96,9 @@ const slides = [
       thumb.addEventListener('click', () => show(Number(thumb.dataset.unidadeIdx)))
     );
 
+    root.querySelector('[data-unidade-prev]')?.addEventListener('click', () => show(current - 1));
+    root.querySelector('[data-unidade-next]')?.addEventListener('click', () => show(current + 1));
+
     // Swipe/drag to change slide (mobile). Detects horizontal intent so the
     // page can still scroll vertically; the image does not follow the finger —
     // on release it fades to the next/previous slide.
@@ -84,7 +111,7 @@ const slides = [
 
     stage.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
-      if ((e.target as HTMLElement).closest('[data-unidade-idx]')) return; // thumbnail
+      if ((e.target as HTMLElement).closest('[data-unidade-idx],[data-unidade-nav]')) return; // thumbnail / arrow
       tracking = true;
       horizontal = false;
       downX = e.clientX;
