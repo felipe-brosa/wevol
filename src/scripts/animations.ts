@@ -130,4 +130,52 @@ function init() {
   });
 }
 
+/**
+ * CorpoUnico status chips over the va600 screen.
+ * Desktop (≥1280): the 4 chips float with a gentle, desynchronized wiggle.
+ * Mobile (<1280): only one chip is shown at a time, cycling through the 4 with
+ * a fade-in-from-below. No-JS / reduced-motion fallback: desktop shows all four
+ * static, mobile shows the first chip only (via `max-xl:opacity-0` on the rest).
+ */
+function initChips() {
+  const scope = document.querySelector<HTMLElement>('[data-chips-scope]');
+  if (!scope) return;
+  const chips = gsap.utils.toArray<HTMLElement>('[data-chip]', scope);
+  if (!chips.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const mm = gsap.matchMedia();
+
+  mm.add('(min-width: 1280px)', () => {
+    gsap.set(chips, { opacity: 1, y: 0 });
+    const tweens = chips.map((chip, i) =>
+      gsap.to(chip, {
+        y: 10,
+        duration: 2.4 + i * 0.4,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: i * 0.5,
+      })
+    );
+    return () => tweens.forEach((t) => t.kill());
+  });
+
+  mm.add('(max-width: 1279px)', () => {
+    gsap.set(chips, { opacity: 0, y: 0 });
+    const cycle = gsap.timeline({ repeat: -1 });
+    chips.forEach((chip) => {
+      cycle
+        .fromTo(
+          chip,
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+        )
+        .to(chip, { opacity: 0, y: -12, duration: 0.5, ease: 'power2.in' }, '+=2');
+    });
+    return () => cycle.kill();
+  });
+}
+
 init();
+initChips();

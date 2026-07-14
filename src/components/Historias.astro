@@ -1,33 +1,167 @@
 ---
-// "Histórias reais. Evoluções reais." — arc of photo cards, tallest at center
-const cards = [
-  { src: 'images/historia-1.png', w: 300, h: 483 },
-  { src: 'images/historia-2.png', w: 320, h: 516 },
-  { src: 'images/historia-3.png', w: 340, h: 548 },
-  { src: 'images/historia-4.png', w: 360, h: 581 },
-  { src: 'images/historia-5.png', w: 340, h: 548 },
-  { src: 'images/historia-6.png', w: 320, h: 516 },
-  { src: 'images/historia-1.png', w: 300, h: 483 },
+// "Histórias reais. Evoluções reais." — coverflow carousel of story videos.
+// Center card is largest at full opacity; side cards shrink + fade with distance.
+// Desktop shows 5 cards (±2), tablet/mobile show 3 (±1). Videos are the shared
+// placeholder until the real ones arrive; each card keeps a distinct poster.
+const stories = [
+  { poster: 'images/historia-1.png' },
+  { poster: 'images/historia-2.png' },
+  { poster: 'images/historia-3.png' },
+  { poster: 'images/historia-4.png' },
+  { poster: 'images/historia-5.png' },
+  { poster: 'images/historia-6.png' },
 ];
+const VIDEO = 'videos/hero-placeholder.webm';
 ---
 
-<section class="overflow-hidden bg-wevol-black py-24">
+<section
+  class="relative overflow-hidden bg-wevol-black py-24"
+  style="--hist-cw: clamp(260px, 150px + 27.3vw, 360px)"
+  data-historias
+>
   <h2
-    class="wv-title mx-auto max-w-[806px] px-8 text-center text-[clamp(32px,2.5vw,48px)] leading-[1.25] text-wevol-off-white"
+    class="wv-title wv-ftype [--fs-min:36] [--fs-max:60] mx-auto max-w-[806px] px-8 text-center leading-[1.25] text-wevol-off-white"
     data-reveal="words"
   >
     Histórias reais. Evoluções reais.
   </h2>
 
-  <div class="mt-20 flex items-center justify-center gap-3">
-    {cards.map((card) => (
-      <img
-        src={card.src}
-        alt="Aluno WEVOL"
-        class="shrink-0 rounded object-cover"
-        style={`width:${card.w}px;height:${card.h}px;`}
-        data-reveal-img
-      />
+  <div
+    class="relative mt-16 w-full md:mt-20"
+    style="height: calc(var(--hist-cw) * 581 / 360)"
+    data-hist-track
+  >
+    {stories.map((story, i) => (
+      <button
+        type="button"
+        class="hist-card absolute left-1/2 top-1/2 aspect-[360/581] w-[var(--hist-cw)] cursor-pointer overflow-hidden rounded-lg"
+        data-hist-card={i}
+        aria-label={`História ${i + 1}`}
+      >
+        <video
+          class="pointer-events-none size-full object-cover"
+          poster={story.poster}
+          muted
+          loop
+          playsinline
+          preload="none"
+        >
+          <source src={VIDEO} type="video/webm" />
+        </video>
+        {/* center-only hover affordance: dim + play button */}
+        <span class="hist-overlay pointer-events-none absolute inset-0 grid place-items-center bg-black/30 opacity-0">
+          <span class="grid size-16 place-items-center rounded-full border border-wevol-off-white/70 bg-black/20 backdrop-blur-sm">
+            <svg width="22" height="26" viewBox="0 0 22 26" fill="none" aria-hidden="true" class="hist-icon-play translate-x-0.5">
+              <path d="M0 1.5 20 13 0 24.5V1.5Z" fill="currentColor" class="text-wevol-off-white" />
+            </svg>
+            <svg width="20" height="24" viewBox="0 0 20 24" fill="currentColor" aria-hidden="true" class="hist-icon-pause hidden text-wevol-off-white">
+              <rect x="2" y="1" width="5" height="22" rx="1" />
+              <rect x="13" y="1" width="5" height="22" rx="1" />
+            </svg>
+          </span>
+        </span>
+      </button>
     ))}
   </div>
 </section>
+
+<style>
+  .hist-card {
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+    will-change: transform, opacity;
+    transition:
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.55s ease;
+  }
+  .hist-card:focus-visible {
+    outline: 2px solid var(--color-wevol-orange);
+    outline-offset: 3px;
+  }
+  .hist-overlay {
+    transition: opacity 0.3s ease;
+  }
+  /* Only the centered card reveals the dim + play control on hover/focus */
+  .hist-card.is-center:hover .hist-overlay,
+  .hist-card.is-center:focus-visible .hist-overlay {
+    opacity: 1;
+  }
+  .hist-card.is-playing .hist-icon-play {
+    display: none;
+  }
+  .hist-card.is-playing .hist-icon-pause {
+    display: block;
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-historias]');
+  if (root) {
+    const cards = [...root.querySelectorAll<HTMLButtonElement>('[data-hist-card]')];
+    const N = cards.length;
+    const SCALE = [1, 0.944, 0.889];
+    const OPACITY = [1, 0.6, 0.25];
+    let active = 0;
+
+    // Desktop (≥1280) shows two cards per side, tablet/mobile one.
+    const range = () => (window.innerWidth >= 1280 ? 2 : 1);
+
+    // Signed offset from the active card, wrapped to the nearest direction so the
+    // carousel loops seamlessly (…-2 -1 0 1 2…).
+    const offsetOf = (i: number) => {
+      let off = ((i - active) % N + N) % N;
+      if (off > N / 2) off -= N;
+      return off;
+    };
+
+    function place() {
+      const r = range();
+      const step = cards[0].offsetWidth * 0.972 + 12; // half center + gap + half neighbour
+      cards.forEach((card, i) => {
+        const off = offsetOf(i);
+        const abs = Math.abs(off);
+        const visible = abs <= r;
+        const scale = visible ? SCALE[abs] ?? 0.85 : 0.85;
+        card.style.transform = `translate(-50%, -50%) translateX(${off * step}px) scale(${scale})`;
+        card.style.opacity = visible ? String(OPACITY[abs] ?? 0) : '0';
+        card.style.zIndex = String(10 - abs);
+        card.style.pointerEvents = visible ? 'auto' : 'none';
+        card.classList.toggle('is-center', off === 0);
+        card.setAttribute('aria-hidden', off === 0 ? 'false' : 'true');
+        if (off !== 0) {
+          const v = card.querySelector('video');
+          if (v && !v.paused) v.pause();
+          card.classList.remove('is-playing');
+        }
+      });
+    }
+
+    cards.forEach((card, i) => {
+      card.addEventListener('click', () => {
+        if (offsetOf(i) !== 0) {
+          active = i; // bring a side card to the centre
+          place();
+          return;
+        }
+        // centre card: toggle playback
+        const v = card.querySelector('video');
+        if (!v) return;
+        if (v.paused) {
+          v.play().catch(() => {});
+          card.classList.add('is-playing');
+        } else {
+          v.pause();
+          card.classList.remove('is-playing');
+        }
+      });
+    });
+
+    place();
+
+    let rt: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = setTimeout(place, 100);
+    });
+  }
+</script>

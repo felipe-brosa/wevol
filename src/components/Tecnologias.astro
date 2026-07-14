@@ -14,11 +14,10 @@ const pill = 'A NOVA ERA DO TREINO INTELIGENTE';
 ---
 
 <section class="relative bg-wevol-light">
-  {/* pills straddling the black → gray boundary */}
-  <div class="relative flex -translate-y-1/2 justify-center" aria-hidden="true">
-    <div class="absolute top-[-57px] hidden h-[104px] w-[600px] rounded-full bg-[#111]/70 lg:block"></div>
-    <div class="relative flex h-[72px] items-center overflow-hidden rounded-full bg-wevol-black px-4 lg:h-[104px] lg:w-[660px] lg:justify-center lg:px-0">
-      <p class="wv-title whitespace-nowrap text-sm uppercase tracking-[0.6em] text-wevol-off-white">
+  {/* tagline pill straddling the black → gray boundary (Figma: #111, Sans Medium) */}
+  <div class="relative flex -translate-y-1/2 justify-center px-6">
+    <div class="flex items-center justify-center rounded-full bg-[#111] px-8 py-6 lg:px-16 lg:py-10">
+      <p class="whitespace-nowrap text-center text-[11px] font-medium uppercase leading-5 tracking-[0.2em] text-wevol-off-white sm:text-sm sm:tracking-[0.5em]">
         {pill}
       </p>
     </div>
@@ -33,17 +32,17 @@ const pill = 'A NOVA ERA DO TREINO INTELIGENTE';
 
   <div class="wv-container relative pb-24 pt-10">
     <h2
-      class="wv-title mx-auto max-w-[808px] text-center text-[clamp(32px,2.5vw,48px)] leading-none text-wevol-ink"
+      class="wv-title wv-ftype [--fs-min:36] [--fs-max:48] mx-auto max-w-[808px] text-center leading-tight text-wevol-ink"
       data-reveal="words"
     >
       A inteligência por trás da sua evolução.
     </h2>
 
-    <div class="mt-24 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="mt-24 grid grid-cols-2 gap-3 md:grid-cols-4 xl:gap-6">
       {techs.map((tech) => (
         <a
           href="#"
-          class="group relative flex h-[320px] flex-col justify-end overflow-hidden rounded px-5 py-6 focus-visible:outline-2 focus-visible:outline-wevol-orange"
+          class="group relative flex aspect-square flex-col justify-end overflow-hidden rounded p-4 focus-visible:outline-2 focus-visible:outline-wevol-orange xl:aspect-[286/320] xl:p-5"
         >
           <img
             src={tech.image}
@@ -55,7 +54,7 @@ const pill = 'A NOVA ERA DO TREINO INTELIGENTE';
             class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/0 to-50%"
             aria-hidden="true"
           ></div>
-          <h3 class="wv-title relative text-2xl leading-[1.25] tracking-[-0.02em] text-white">
+          <h3 class="wv-title relative text-lg leading-[1.25] tracking-[-0.02em] text-white sm:text-xl xl:text-2xl">
             {tech.title}
           </h3>
         </a>

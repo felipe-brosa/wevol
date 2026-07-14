@@ -10,10 +10,10 @@ const objetivos = [
 ];
 ---
 
-<section class="bg-wevol-black py-24">
+<section class="bg-wevol-black py-[var(--wv-section-y)]">
   <div class="wv-container flex flex-col items-center gap-16">
     <h2
-      class="wv-title flex flex-wrap items-center justify-center gap-5 text-center text-[clamp(28px,2.5vw,48px)] leading-none text-wevol-off-white"
+      class="wv-title wv-ftype [--fs-min:36] [--fs-max:48] flex flex-wrap items-center justify-center gap-5 text-center leading-tight text-wevol-off-white"
       data-reveal="words"
     >
       <span>A</span>
@@ -25,7 +25,7 @@ const objetivos = [
       <span>acompanha diferentes objetivos</span>
     </h2>
 
-    <ul class="flex w-full flex-wrap items-center justify-center gap-x-8 gap-y-4 lg:justify-between lg:gap-0">
+    <ul class="flex w-full flex-col flex-wrap items-center justify-center gap-2 lg:flex-row">
       {objetivos.map((obj, i) => (
         <>
           {i > 0 && (
@@ -33,7 +33,7 @@ const objetivos = [
               <img src="icons/asterisk.svg" alt="" class="size-[30px]" />
             </li>
           )}
-          <li class="wv-title text-[clamp(18px,1.25vw,24px)] leading-[1.25] text-wevol-off-white">
+          <li class="wv-title text-2xl leading-[1.25] text-wevol-off-white">
             {obj}
           </li>
         </>

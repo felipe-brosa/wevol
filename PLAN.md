@@ -6,6 +6,59 @@ espaçamento fluidos com `clamp()`. **O menu já está pronto** (não refazer).
 
 ---
 
+## ⏳ Onde paramos (atualizado — sessão 2)
+
+> **MODO DE TRABALHO AGORA: SÓ LOCAL, SEM GITHUB.** O Felipe está desenvolvendo no
+> computador de casa e vai acumular tudo para subir de uma vez depois. **Não commitar
+> nem dar push** — apenas editar os arquivos no disco. Verificar cada mudança com
+> `npm run build` (tem que passar limpo); o Felipe confere no `npm run dev`. O
+> `git add/commit/push` fica por conta do Felipe, quando ele decidir.
+
+### Concluído
+- **Fase 1 inteira** — sistema fluido montado + todas as sections rápidas re-derivadas do
+  Figma (ver §10). **Zero `vw` puro restante** (o último — rótulo da tab do Jornada — foi
+  resolvido junto do #3).
+- **Fase 2 · #2 CorpoUnico** — título fluido, **4 chips** (wiggle dessincronizado no
+  desktop / 1 ciclando no mobile) e o **"elemento que vaza"** para o Hero
+  (`overflow-x-clip` + `isolate`; asset `public/icons/corpo-bleed.svg`; sem tocar no Hero).
+- **Fase 2 · #3 Jornada** (tabs/carrossel) — reestruturado (ver §10). Dots alinhados aos
+  rótulos (sem `-mt-8`); md+ = lista vertical, `<md` = fileira de dots + nome selecionado +
+  setas; slides = `viewport − gap − peek` (1 inteiro + espiada em toda tela); não-ativos a
+  20% de opacidade; último slide fica flush à esquerda com vazio à direita. `vw` puro do
+  rótulo trocado por `clamp` ancorado em rem.
+- **Fase 2 · #11 Historias** (arco de fotos → **carrossel de vídeos** coverflow) — ver §10.
+  Center card maior a 100% opacidade; laterais encolhem + desbotam com a distância; desktop
+  (≥1280) mostra 5, tablet/mobile 3; clicar numa lateral recentra; hover no centro = dim +
+  botão play; vídeo = placeholder (`hero-placeholder.webm`).
+- **Fonte corrigida** — títulos usam **Instrument Sans estática**
+  (`@fontsource/instrument-sans` 400/500/600/700), **não** mais a variável. `--font-sans`
+  em `global.css` = `'Instrument Sans', system-ui, sans-serif`.
+
+- **Polimento · #12 Blog** — 3 posts com **títulos e imagens distintos** (títulos do Figma;
+  imagens = `tech-biotriagem`/`tech-ems`/`tech-estacao` como placeholders) + link
+  **"Ler matéria completa no blog →"** por card (Sans 500 16px `grad-1`, underline via
+  `border-b`, seta que desliza no hover). Imagem do card 320px.
+
+- **Polimento · #5 Experiencia** — os 6 ícones agora são os **glifos Iconify exatos do Figma**
+  (`tabler:clock`, `icon-park-outline:muscle`, `material-symbols:list`,
+  `hugeicons:body-part-leg`, `flowbite:users-outline`, `nimbus:ecosystem`), embutidos inline
+  com `currentColor` = **wevol-orange** (#ff3d00, cor do Figma), `size-10`.
+- **Polimento · #4 Tecnologias** — pill refeito conforme Figma (single `#111`, rounded-full,
+  Sans **Medium 14px**, tracking 0.5em desktop / 0.2em mobile p/ caber); grid agora
+  **2 colunas no mobile** → 4 no tablet/desktop (`grid-cols-2 md:grid-cols-4`), cards
+  `aspect-square` (mobile/tablet) / `aspect-[286/320]` (desktop), gap 12→24, título responsivo.
+- **Polimento · #8 UnidadeCarousel** — alturas fixas trocadas por **aspect-ratio do Figma**
+  por tier: `aspect-[370/438]` (mobile) · `md:aspect-[827/909]` (tablet) ·
+  `lg:aspect-[1216/900]` (desktop, junto com os thumbnails).
+
+### Próximos
+**Nada pendente de layout/responsividade** — Fase 1, Fase 2 e o polimento de todas as sections
+estão feitos e conferidos nos 4 tiers. O que resta é **conteúdo real** (não é layout):
+vídeos reais das Histórias (hoje placeholder `hero-placeholder.webm`), fotos reais do Blog
+(hoje placeholders `tech-*`), e o vídeo real do Hero. Trocar quando os assets chegarem.
+
+---
+
 ## 1. Stack e comandos
 
 - **Astro 7** + **Tailwind v4** (via `@tailwindcss/vite`) + **GSAP/ScrollTrigger/SplitText** + **Lenis** (scroll suave).
@@ -15,9 +68,14 @@ espaçamento fluidos com `clamp()`. **O menu já está pronto** (não refazer).
 
 ## 2. Convenções de trabalho
 
-- **Branch de desenvolvimento:** `claude/project-context-devices-rslld5`. Publicar = fast-forward de `main` (o deploy do GitHub Pages roda em push na `main`, via `.github/workflows/deploy.yml`). Site ao vivo: https://felipe-brosa.github.io/wevol/
-- **Publicar só com aprovação do Felipe.** Acumular várias sections antes de verificar/publicar.
-- **Economia de tokens (importante):** preferir que o Felipe confira o visual local/ao vivo em vez do agente ler screenshots (imagem lida = caro). Puxar o Figma **por section, na hora de implementar**. Evitar respostas gigantes de API. Sessões longas ficam caras — preferir sessões novas por fase.
+- **SÓ LOCAL POR ENQUANTO — não commitar nem dar push.** Ver o bloco "Onde paramos" no
+  topo. O Felipe acumula tudo e sobe de uma vez depois. (O deploy do GitHub Pages roda em
+  push na `main` via `.github/workflows/deploy.yml`; site ao vivo:
+  https://felipe-brosa.github.io/wevol/. A branch `claude/project-context-devices-rslld5`
+  existe no remoto mas **não** é usada enquanto o trabalho for local.)
+- **Verificar antes de entregar:** `npm run build` tem que passar limpo; o Felipe confere
+  o visual no `npm run dev`.
+- **Economia de tokens (importante):** preferir que o Felipe confira o visual local/ao vivo em vez do agente ler screenshots (imagem lida = caro; e o screenshot automático **trava** nesta página por causa das animações GSAP infinitas — a página nunca fica idle). Para verificar sem screenshot, dá para medir via JS no navegador (ex.: `document.documentElement.scrollWidth`, `getComputedStyle`, posições de elementos). Puxar o Figma **por section, na hora de implementar** (usar `excludeScreenshot: true` no `get_design_context` para baratear). Sessões longas ficam caras — preferir sessões novas por fase.
 - Identidade de commits: `Claude <noreply@anthropic.com>`.
 
 ## 3. Breakpoints (decididos)
@@ -35,6 +93,17 @@ Tailwind default + `--breakpoint-2xl: 1440px` (já setado em global.css). Frames
 - Usar breakpoints só para mudanças **estruturais** (nº de colunas, overlay vs inline). Tamanho de fonte/espaçamento → `clamp()`.
 
 ## 4. Sistema fluido com `clamp()`
+
+> **JÁ IMPLEMENTADO em `src/styles/global.css` (usar, não recriar):**
+> - **`.wv-ftype`** — utilitário de fonte fluida. Uso: `class="wv-ftype [--fs-min:36] [--fs-max:48]"`
+>   (números em px). Interpola 402→1440 com min/max em `rem` + 1 ponto `rem+vw` — acessível,
+>   **nunca `vw` puro**. Substitui todo `text-[clamp(...vw...)]` chutado.
+> - **`--wv-pad-x`** (16→32px) — já aplicado no `.wv-container` (padding lateral).
+> - **`--wv-section-y`** (64→96px) — ritmo vertical padrão; usar `py-[var(--wv-section-y)]`
+>   (mas conferir: nem toda section é 64→96; ex.: Localizador é 96 flat).
+> - **Cuidado**: nem todo título é fluido (alguns são flat, ex.: Localizador/Blog = **Serif
+>   60px fixo**) e a **família varia** (Sans `.wv-title` vs Serif `.wv-title-alt`). Sempre
+>   puxar o Figma da section e conferir **família + tamanho nos 2 extremos** antes de aplicar.
 
 - Ancorar nos extremos: **min = mobile (402)**, **max = desktop large (1440)**; usar 875/1280 como conferência.
 - Fórmula sempre com `rem` no meio (acessibilidade): `clamp(MIN, Arem + Bvw, MAX)` — **nunca vw puro** no meio (quebra o zoom de texto).
@@ -134,3 +203,40 @@ Commitar **a cada section** (não perder trabalho se acabar a sessão).
 
 ## 10. Já concluído (não refazer)
 - **Menu completo:** morph de scroll no desktop (cápsula compacta, hide/show com dwell de 2s), overlay animado tablet/mobile (breakpoint 1280, botão "Menu" + hambúrguer), favicon WEVOL. Arquivo: `src/components/Header.astro`.
+- **Fundação fluida** (`global.css`): `.wv-ftype`, `--wv-pad-x`, `--wv-section-y` (ver §4).
+- **Fonte**: Instrument Sans **estática** (não variável) — `Layout.astro` importa
+  `@fontsource/instrument-sans/400|500|600|700.css`; `--font-sans` sem a variável.
+- **Fase 1 — sections re-derivadas do Figma** (fonte/espaçamento fluidos, sem `vw` puro):
+  - **#1 Hero**: imagem→**vídeo** (`hero-placeholder.webm`, com `poster`), **`h-svh`** (100vh),
+    título 48→128, sub 24→30, centralizado no mobile / à esquerda no desktop.
+  - **#5 Tecnologias** (título 36→48).
+  - **#6 Experiencia** (48→60 · 60→72).
+  - **#7 Objetivos** (título 36→48; itens 24px; padding fluido; lista empilha no mobile).
+  - **#9 Franquia** (36→60 · corpo 16→20 · "Seja um franqueado" 48→72).
+  - **#10 Localizador** e **#12 Blog** (título = **Serif 60px fixo** — o código chutado usava Sans 48).
+  - **#13 CtaFinal** (título 48→128; **subtítulo trocado de Serif p/ Sans** 20→30, conforme Figma).
+  - **#14 Footer** (links = 36px fixo).
+  - **#11 Historias**: título 36→60 (a interação está logo abaixo, na Fase 2).
+- **Fase 2 · #11 Historias** (`Historias.astro`): título 36→60; **coverflow de vídeos**
+  (JS inline, sem lib). Cards `<button>` absolutos centrados; posição/escala/opacidade por
+  offset ao ativo (loop infinito, wrap p/ direção mais curta). Center 360×581 (`md+`, via
+  `--hist-cw: clamp(260→360)` + `aspect-[360/581]`) / 260×419 (mobile); escala lateral
+  0.944/0.889, opacidade 1/0.6/0.25; `range` = 2 (≥1280, 5 cards) / 1 (3 cards). `step` medido
+  do `offsetWidth`. Clique numa lateral recentra; clique no centro dá play/pause; hover no
+  centro = dim + botão play (SVG). Vídeo = `hero-placeholder.webm` (poster distinto por card).
+  **Nota:** as transições CSS ficam congeladas no preview pane — conferir por estilo inline.
+- **Fase 2 · #3 Jornada** (`Jornada.astro`): título 30→72; **md+** = lista vertical de tabs
+  com trilho de dots alinhado a cada rótulo (dot centrado na 1ª linha via
+  `top: calc(0.625 * var(--jt-fs))`), rótulo fluido `clamp(20→34px)` (Sans 400), ativo em
+  `grad-1`; **`<md`** = fileira horizontal de dots (todos) + nome da etapa (Sans 500 18px
+  `grad-1`) + setas prev/next (desabilitam nos extremos). Carrossel finito (sem loop):
+  `--jt-slide-w = viewport − 24 − peek` setado por JS (fallback em `<style>` por breakpoint),
+  slides portrait 534px (`<lg`) / landscape 464px (`lg+`), não-ativos `opacity-20`, e o
+  **ativo sempre flush à esquerda** (último deixa vazio à direita = fim). Auto-advance 4s
+  mantido, para no último. Sangra até a borda direita da tela pra mostrar a espiada.
+- **Fase 2 · #2 CorpoUnico** (`CorpoUnico.astro` + lógica de chips em `scripts/animations.ts`):
+  título serif 48→72; **4 chips** posicionados por % relativos à imagem va600 (desktop:
+  wiggle dessincronizado; mobile: 1 ciclando com fade-up); **elemento que vaza** para o Hero
+  (`overflow-x-clip` + `isolate` na section, forma `public/icons/corpo-bleed.svg` com
+  `rotate-180`, atrás do conteúdo via z-index). Ícones dos chips são **placeholders SVG inline**
+  (dá pra trocar pelos exatos do Figma depois).

@@ -2,15 +2,18 @@
 
 ---
 
-<section class="relative flex min-h-svh items-end overflow-hidden bg-wevol-black">
+<section class="relative flex h-svh items-end overflow-hidden bg-wevol-black">
   <div class="absolute inset-0" aria-hidden="true">
-    <img
-      src="images/hero-bg.png"
-      alt=""
+    <video
       class="size-full object-cover"
+      src="videos/hero-placeholder.webm"
+      poster="images/hero-bg.png"
+      autoplay
+      muted
+      loop
+      playsinline
       data-reveal-img
-      fetchpriority="high"
-    />
+    ></video>
     <div
       class="absolute inset-0"
       style="background-image: linear-gradient(0deg, rgb(9, 9, 9) 0%, rgba(17, 17, 17, 0) 56.348%), linear-gradient(90deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);"
@@ -19,11 +22,17 @@
   </div>
 
   <div class="wv-container relative pb-8 pt-40">
-    <div class="flex max-w-[1065px] flex-col gap-8 text-wevol-off-white">
-      <h1 class="wv-title text-[clamp(56px,6.67vw,128px)] tracking-[-0.02em]" data-reveal="words">
+    <div class="flex flex-col items-center gap-8 text-center text-wevol-off-white xl:max-w-[1065px] xl:items-start xl:text-left">
+      <h1
+        class="wv-title wv-ftype [--fs-min:48] [--fs-max:128] leading-none tracking-[-0.02em]"
+        data-reveal="words"
+      >
         Evolução da saúde<br />e performance
       </h1>
-      <p class="wv-title-alt max-w-[800px] text-[clamp(20px,1.57vw,30px)]" data-reveal="lines">
+      <p
+        class="wv-title-alt wv-ftype [--fs-min:24] [--fs-max:30] max-w-[800px] leading-[1.25]"
+        data-reveal="lines"
+      >
         Muito mais do que um treino. A WEVOL integra tecnologia, inteligência e acompanhamento
         personalizado para criar uma experiência única de evolução humana.
       </p>

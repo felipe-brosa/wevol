@@ -1,14 +1,42 @@
 ---
 // Section "Seu corpo é único." — responsive reference: nodes 4158:57 / 70 / 83 / 108
+// Floating status chips over the va600 screen: desktop = 4 desynced wiggling chips,
+// mobile = a single chip cycling through the 4 (handled in scripts/animations.ts).
+const chips = [
+  { label: 'Postura escaneada', icon: 'person', pos: 'xl:left-[55%] xl:top-[4%]' },
+  { label: 'Gordura corporal analisada', icon: 'scan', pos: 'xl:left-[69%] xl:top-[15%]' },
+  { label: 'Análise concluída', icon: 'check', pos: 'xl:left-[51%] xl:top-[53%]' },
+  { label: 'Relatório gerado', icon: 'report', pos: 'xl:left-[69%] xl:top-[64%]' },
+];
+
+const icons: Record<string, string> = {
+  person:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="size-6 shrink-0" aria-hidden="true"><circle cx="12" cy="7" r="3.2"/><path d="M5.5 20v-1a6.5 6.5 0 0 1 13 0v1"/></svg>',
+  scan:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="size-6 shrink-0" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="2.5"/></svg>',
+  check:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="size-6 shrink-0" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>',
+  report:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="size-6 shrink-0" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>',
+};
 ---
 
-<section class="relative overflow-hidden bg-wevol-black">
-  <div class="wv-container relative flex flex-col items-center py-20 xl:h-[750px] xl:flex-row xl:items-center xl:py-0">
+<section class="relative isolate overflow-x-clip bg-wevol-black">
+  {/* Gradient shape bleeding up into the Hero (desktop only), behind section content */}
+  <img
+    src="icons/corpo-bleed.svg"
+    alt=""
+    aria-hidden="true"
+    class="pointer-events-none absolute z-0 hidden h-[760px] w-[1050px] max-w-none rotate-180 xl:block"
+    style="left: calc(50% + 456px); top: -280px;"
+  />
+
+  <div class="wv-container relative z-10 flex flex-col items-center py-20 xl:h-[750px] xl:flex-row xl:items-center xl:py-0">
     <div
       class="flex w-full max-w-[760px] flex-col items-center gap-8 text-center xl:max-w-[520px] xl:items-start xl:text-left 2xl:max-w-[720px]"
     >
       <h2
-        class="wv-title-alt w-full text-[60px] leading-none tracking-[-0.02em] text-wevol-off-white xl:text-[48px] 2xl:text-[72px]"
+        class="wv-title-alt wv-ftype [--fs-min:48] [--fs-max:72] w-full leading-none tracking-[-0.02em] text-wevol-off-white"
         data-reveal="words"
       >
         <span class="block">Seu corpo é único.</span>
@@ -28,13 +56,31 @@
       <a href="#" class="wv-btn-primary">Conheça a metodologia</a>
     </div>
 
-    <div class="mt-14 w-full xl:mt-0" aria-hidden="true">
+    <div
+      class="relative mx-auto mt-14 w-full max-w-[976px] xl:absolute xl:left-[calc(50%+340px)] xl:top-1/2 xl:mt-0 xl:w-[696px] xl:max-w-none xl:-translate-x-1/2 xl:-translate-y-1/2 2xl:w-[928px]"
+      aria-hidden="true"
+      data-chips-scope
+    >
       <img
         src="images/va600.png"
         alt=""
-        class="mx-auto w-full max-w-[976px] object-contain xl:absolute xl:left-[calc(50%+340px)] xl:top-1/2 xl:w-[696px] xl:max-w-none xl:-translate-x-1/2 xl:-translate-y-1/2 2xl:w-[928px]"
+        class="w-full object-contain"
         data-reveal-img
       />
+
+      {chips.map((chip, i) => (
+        <div
+          class:list={[
+            'absolute left-1/2 top-[6%] flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full border border-wevol-grad-1 bg-black/50 px-3 py-2 text-wevol-grad-1',
+            chip.pos,
+            i > 0 && 'max-xl:opacity-0',
+          ]}
+          data-chip
+        >
+          <Fragment set:html={icons[chip.icon]} />
+          <span class="text-sm font-medium leading-5">{chip.label}</span>
+        </div>
+      ))}
     </div>
   </div>
 </section>

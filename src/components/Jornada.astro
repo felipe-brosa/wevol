@@ -1,5 +1,7 @@
 ---
-// Section "Uma jornada construída para a sua evolução." — tabs with auto-advance (finite, no loop)
+// Section "Uma jornada construída para a sua evolução." — finite tab carousel.
+// Desktop/tablet (md+): vertical tab list (dot rail aligned to each label).
+// Mobile (<md): horizontal dot row + selected step name + prev/next arrows.
 const steps = [
   {
     title: 'Avaliação Inicial',
@@ -32,36 +34,43 @@ const steps = [
     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vulputate sem eu dolor varius dapibus. Aliquam erat volutpat. Sed ut tellus quis felis condimentum gravida nec at dui. Cras et venenatis lectus.',
   },
 ];
+const lastIndex = steps.length - 1;
 ---
 
 <section class="relative overflow-hidden bg-wevol-black pb-40 pt-24" data-jornada>
   <div class="wv-container">
     <h2
-      class="wv-title max-w-[1396px] text-[clamp(40px,3.75vw,72px)] text-wevol-off-white"
+      class="wv-title wv-ftype [--fs-min:30] [--fs-max:72] max-w-[1396px] leading-tight text-wevol-off-white"
       data-reveal="words"
     >
       Uma jornada construída para a sua evolução.
     </h2>
   </div>
 
-  <div class="wv-container mt-24 grid grid-cols-1 gap-16 lg:grid-cols-[470px_1fr]">
+  <div
+    class="wv-container mt-16 grid grid-cols-1 gap-y-8 md:mt-24 md:grid-cols-[clamp(17rem,-1.5rem+37.8vw,32.5rem)_1fr] md:gap-x-[clamp(2rem,-2.3rem+7.9vw,5rem)]"
+  >
     <div>
-      <p class="max-w-[446px] text-base text-wevol-off-white" data-reveal="lines">
+      <p class="max-w-[460px] text-base text-wevol-off-white" data-reveal="lines">
         Cada etapa prepara a próxima para que a evolução aconteça de forma integrada.
       </p>
 
-      <ol class="mt-8 flex flex-col" role="tablist" aria-label="Etapas da jornada WEVOL">
+      {/* md+ — vertical tab list with a dot rail aligned to each label */}
+      <ol
+        class="mt-4 hidden md:block"
+        style="--jt-fs: clamp(1.25rem, -0.105rem + 2.478vw, 2.125rem)"
+        role="tablist"
+        aria-label="Etapas da jornada WEVOL"
+      >
         {steps.map((step, i) => (
-          <li class="relative flex items-center gap-4">
-            {/* timeline: dot + connector */}
-            <span class="relative flex h-[70px] w-3 shrink-0 flex-col items-center">
-              <span
-                class="size-3 rounded-full bg-wevol-gray transition-colors duration-300 [.is-active_&]:bg-wevol-orange"
-                data-jornada-dot
-              ></span>
-              {i < steps.length - 1 && (
-                <span class="mt-1 w-px flex-1 bg-wevol-gray/70"></span>
+          <li class="relative flex gap-4" data-jornada-item>
+            <span class="relative w-3 shrink-0" aria-hidden="true">
+              {i < lastIndex && (
+                <span class="absolute left-1/2 top-[calc(0.625*var(--jt-fs))] h-full w-px -translate-x-1/2 bg-wevol-beige/50"></span>
               )}
+              <span
+                class="absolute left-1/2 top-[calc(0.625*var(--jt-fs))] size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-wevol-beige transition-colors duration-300 [.is-active_&]:bg-wevol-grad-1"
+              ></span>
             </span>
             <button
               type="button"
@@ -69,7 +78,8 @@ const steps = [
               id={`jornada-tab-${i}`}
               aria-selected={i === 0 ? 'true' : 'false'}
               aria-controls={`jornada-panel-${i}`}
-              class="wv-title -mt-8 cursor-pointer text-left text-[clamp(22px,1.6vw,30px)] leading-[1.25] text-wevol-off-white transition-colors duration-300 hover:text-wevol-orange/80 focus-visible:outline-2 focus-visible:outline-wevol-orange aria-selected:text-wevol-orange"
+              class="wv-title cursor-pointer pb-8 text-left leading-[1.25] text-wevol-off-white transition-colors duration-300 last:pb-0 hover:text-wevol-grad-1 focus-visible:outline-2 focus-visible:outline-wevol-orange aria-selected:text-wevol-grad-1"
+              style="font-size: var(--jt-fs)"
               data-jornada-tab={i}
             >
               {step.title}
@@ -77,16 +87,66 @@ const steps = [
           </li>
         ))}
       </ol>
+
+      {/* mobile — horizontal dot row (all dots), selected name + arrows */}
+      <div class="mt-6 flex items-center md:hidden" aria-hidden="true">
+        {steps.map((step, i) => (
+          <>
+            <button
+              type="button"
+              class="shrink-0 cursor-pointer p-1 [&.is-active_span]:bg-wevol-grad-1"
+              data-jornada-dot-m={i}
+              aria-label={`Etapa ${i + 1}: ${step.title}`}
+            >
+              <span class="block size-3 rounded-full bg-wevol-beige transition-colors duration-300"></span>
+            </button>
+            {i < lastIndex && <span class="h-px flex-1 bg-wevol-beige/50"></span>}
+          </>
+        ))}
+      </div>
+
+      <div class="mt-4 flex items-center justify-between gap-4 md:hidden">
+        <p class="wv-title text-lg font-medium leading-7 text-wevol-grad-1" data-jornada-name>
+          {steps[0].title}
+        </p>
+        <div class="flex shrink-0 items-center gap-3">
+          <button
+            type="button"
+            class="cursor-pointer text-wevol-off-white transition-opacity duration-200 hover:text-wevol-grad-1 disabled:cursor-default disabled:opacity-30"
+            data-jornada-prev
+            aria-label="Etapa anterior"
+          >
+            <svg width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true">
+              <path d="M24 7H2M8 1 2 7l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="cursor-pointer text-wevol-off-white transition-opacity duration-200 hover:text-wevol-grad-1 disabled:cursor-default disabled:opacity-30"
+            data-jornada-next
+            aria-label="Próxima etapa"
+          >
+            <svg width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true">
+              <path d="M0 7h22M16 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div class="relative -mr-8 overflow-hidden lg:-mr-[max(32px,calc((100vw-1672px)/2+32px))]" data-jornada-viewport>
+    {/* carousel — clips slides, bleeds to the right screen edge for the "peek" */}
+    <div
+      class="relative overflow-hidden"
+      style="margin-right: calc(-1 * (var(--wv-pad-x) + max(0px, (100vw - 1672px) / 2)))"
+      data-jornada-viewport
+    >
       <div class="flex gap-6 will-change-transform" data-jornada-strip>
         {steps.map((step, i) => (
           <article
             role="tabpanel"
             id={`jornada-panel-${i}`}
             aria-labelledby={`jornada-tab-${i}`}
-            class="relative flex h-[420px] w-[min(85vw,560px)] shrink-0 flex-col justify-end gap-2.5 overflow-hidden rounded p-8 xl:h-[534px] xl:w-[760px]"
+            class="relative flex h-[534px] w-[var(--jt-slide-w)] shrink-0 flex-col justify-end gap-2.5 overflow-hidden rounded p-8 opacity-20 transition-opacity duration-500 lg:h-[464px]"
           >
             <img src={step.image} alt="" class="absolute inset-0 size-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/0" aria-hidden="true"></div>
@@ -101,44 +161,81 @@ const steps = [
   </div>
 </section>
 
+<style>
+  /* Slide width fallback before JS measures the viewport (kept smaller than the
+     final width so it never reveals two full slides). JS overrides --jt-slide-w. */
+  [data-jornada] {
+    --jt-slide-w: 82vw;
+  }
+  @media (min-width: 768px) {
+    [data-jornada] {
+      --jt-slide-w: 46vw;
+    }
+  }
+  @media (min-width: 1024px) {
+    [data-jornada] {
+      --jt-slide-w: 40vw;
+    }
+  }
+</style>
+
 <script>
-  // Finite auto-advancing tabs: strip slides left per step, clamped so it never
-  // over-scrolls past the last card (no loop back to the start).
-  const root = document.querySelector('[data-jornada]');
+  // Finite carousel (no loop). The active slide is always flush-left, so the last
+  // slide keeps the same position and leaves empty space to its right = "end".
+  const root = document.querySelector<HTMLElement>('[data-jornada]');
   if (root) {
     const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-jornada-tab]')];
     const items = tabs.map((t) => t.closest('li')!);
+    const mDots = [...root.querySelectorAll<HTMLButtonElement>('[data-jornada-dot-m]')];
+    const nameEl = root.querySelector<HTMLElement>('[data-jornada-name]');
+    const prevBtn = root.querySelector<HTMLButtonElement>('[data-jornada-prev]');
+    const nextBtn = root.querySelector<HTMLButtonElement>('[data-jornada-next]');
     const strip = root.querySelector<HTMLElement>('[data-jornada-strip]')!;
     const viewport = root.querySelector<HTMLElement>('[data-jornada-viewport]')!;
+    const slides = [...strip.children] as HTMLElement[];
+    const titles = tabs.map((t) => t.textContent?.trim() ?? '');
+    const GAP = 24;
     const AUTO_MS = 4000;
     let current = 0;
+    let slideW = 0;
     let timer: ReturnType<typeof setInterval> | null = null;
 
-    const maxOffset = () => Math.max(0, strip.scrollWidth - viewport.clientWidth);
-    const stepOffset = (i: number) => {
-      const cards = strip.children;
-      if (!cards[i]) return 0;
-      return Math.min((cards[i] as HTMLElement).offsetLeft, maxOffset());
-    };
+    // slideW = viewport − gap − peek → exactly one full slide + a small peek.
+    function measure() {
+      const vw = viewport.clientWidth;
+      const peek = vw < 768 ? 32 : vw < 1024 ? 64 : 48;
+      slideW = Math.max(0, vw - GAP - peek);
+      root!.style.setProperty('--jt-slide-w', `${slideW}px`);
+    }
 
-    function activate(i: number) {
+    function place() {
+      strip.style.transform = `translateX(-${current * (slideW + GAP)}px)`;
+    }
+
+    function activate(i: number, animate = true) {
       current = i;
       tabs.forEach((tab, j) => {
-        tab.setAttribute('aria-selected', j === i ? 'true' : 'false');
-        items[j].classList.toggle('is-active', j === i);
+        const on = j === i;
+        tab.setAttribute('aria-selected', on ? 'true' : 'false');
+        items[j].classList.toggle('is-active', on);
       });
-      strip.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
-      strip.style.transform = `translateX(-${stepOffset(i)}px)`;
+      mDots.forEach((d, j) => d.classList.toggle('is-active', j === i));
+      slides.forEach((s, j) => {
+        s.classList.toggle('opacity-100', j === i);
+        s.classList.toggle('opacity-20', j !== i);
+      });
+      if (nameEl) nameEl.textContent = titles[i];
+      if (prevBtn) prevBtn.disabled = i === 0;
+      if (nextBtn) nextBtn.disabled = i === tabs.length - 1;
+      strip.style.transition = animate ? 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)' : 'none';
+      place();
     }
 
     function startAuto() {
       stopAuto();
       timer = setInterval(() => {
-        if (current < tabs.length - 1) {
-          activate(current + 1);
-        } else {
-          stopAuto(); // finite: stops after the last tab, no loop
-        }
+        if (current < tabs.length - 1) activate(current + 1);
+        else stopAuto(); // finite: stops after the last slide
       }, AUTO_MS);
     }
     function stopAuto() {
@@ -146,24 +243,31 @@ const steps = [
       timer = null;
     }
 
-    tabs.forEach((tab, i) =>
-      tab.addEventListener('click', () => {
-        activate(i);
-        startAuto(); // user interaction resets the pacing
-      })
-    );
+    const go = (i: number) => {
+      activate(i);
+      startAuto(); // user interaction resets pacing
+    };
+    tabs.forEach((tab, i) => tab.addEventListener('click', () => go(i)));
+    mDots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
+    prevBtn?.addEventListener('click', () => current > 0 && go(current - 1));
+    nextBtn?.addEventListener('click', () => current < tabs.length - 1 && go(current + 1));
 
-    activate(0);
+    measure();
+    activate(0, false);
 
-    // start auto-advance only when the section is visible
     const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => (e.isIntersecting ? startAuto() : stopAuto()));
-      },
+      (entries) => entries.forEach((e) => (e.isIntersecting ? startAuto() : stopAuto())),
       { threshold: 0.35 }
     );
     io.observe(root);
 
-    window.addEventListener('resize', () => activate(current));
+    let rt: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => {
+        measure();
+        activate(current, false);
+      }, 100);
+    });
   }
 </script>

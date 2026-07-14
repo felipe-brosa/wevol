@@ -1,11 +1,20 @@
 ---
-// Blog cards (placeholder content) + CTA to the blog
-const posts = Array.from({ length: 3 }, () => ({
-  titulo: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  resumo:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam non luctus justo. Donec pharetra magna sapien, nec lacinia turpis interdum eu. Pellentesque habitant morbi tristique senectus ...',
-  imagem: 'images/blog.png',
-}));
+// Blog cards (placeholder copy from Figma; distinct title/image per card) + CTA.
+const resumo =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam non luctus justo. Donec pharetra magna sapien, nec lacinia turpis interdum eu. Pellentesque habitant morbi tristique senectus ...';
+const posts = [
+  { titulo: 'O que é biohacking e como funciona', imagem: 'images/tech-biotriagem.png', resumo },
+  {
+    titulo: 'Como melhorar a performance física com tecnologia',
+    imagem: 'images/tech-ems.png',
+    resumo,
+  },
+  {
+    titulo: 'Longevidade: hábitos e tecnologias para viver melhor',
+    imagem: 'images/tech-estacao.png',
+    resumo,
+  },
+];
 ---
 
 <section class="relative overflow-hidden bg-wevol-black py-24">
@@ -18,7 +27,7 @@ const posts = Array.from({ length: 3 }, () => ({
 
   <div class="wv-container relative">
     <h2
-      class="wv-title max-w-[679px] text-[clamp(32px,2.5vw,48px)] leading-[1.25] text-wevol-off-white"
+      class="wv-title-alt text-center text-6xl leading-none tracking-[-0.02em] text-wevol-off-white"
       data-reveal="words"
     >
       Conteúdo para evoluir todos os dias
@@ -27,7 +36,7 @@ const posts = Array.from({ length: 3 }, () => ({
     <div class="mt-20 grid grid-cols-1 gap-10 md:grid-cols-2 xl:grid-cols-3">
       {posts.map((post) => (
         <a href="#" class="group flex flex-col gap-6 focus-visible:outline-2 focus-visible:outline-wevol-orange">
-          <span class="block h-[332px] overflow-hidden rounded">
+          <span class="block h-[320px] overflow-hidden rounded">
             <img
               src={post.imagem}
               alt=""
@@ -36,10 +45,16 @@ const posts = Array.from({ length: 3 }, () => ({
             />
           </span>
           <span class="flex flex-col gap-3 text-wevol-off-white">
-            <span class="wv-title text-2xl leading-[1.25] tracking-[-0.02em] transition-colors group-hover:text-wevol-orange">
+            <span class="wv-title text-2xl leading-[1.25] tracking-[-0.02em] transition-colors group-hover:text-wevol-grad-1">
               {post.titulo}
             </span>
             <span class="text-base">{post.resumo}</span>
+            <span class="mt-1 inline-flex w-fit items-center gap-1 border-b border-wevol-grad-1 pb-1 text-base font-medium leading-6 text-wevol-grad-1">
+              Ler matéria completa no blog
+              <svg width="24" height="13" viewBox="0 0 24 13" fill="none" aria-hidden="true" class="transition-transform duration-300 group-hover:translate-x-1">
+                <path d="M0 6.5h22M16.5 1 22 6.5 16.5 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
           </span>
         </a>
       ))}
