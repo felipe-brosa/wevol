@@ -5,9 +5,19 @@
 <section class="relative flex h-svh items-end overflow-hidden bg-wevol-black">
   <div class="absolute inset-0" aria-hidden="true">
     <video
-      class="size-full object-cover"
-      src="videos/hero-placeholder.webm"
-      poster="images/hero-bg.png"
+      class="hidden size-full object-cover md:block"
+      src="videos/hero-desktop.webm"
+      poster="images/hero-placeholder.webp"
+      autoplay
+      muted
+      loop
+      playsinline
+      data-reveal-img
+    ></video>
+    <video
+      class="size-full object-cover md:hidden"
+      src="videos/hero-mobile.webm"
+      poster="images/hero-placeholder-mobile.webp"
       autoplay
       muted
       loop
