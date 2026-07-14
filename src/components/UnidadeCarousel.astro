@@ -1,5 +1,7 @@
 ---
-// Full-width unit showcase with thumbnail selector overlay
+// Full-width unit showcase (85vh) with crossfading slides.
+// Desktop (lg+): thumbnail selector overlay. Mobile: swipe/drag to change
+// slides — the switch is a fade (not a dragged carousel).
 const slides = [
   'images/unidade-store.png',
   'images/unidade-thumb-1.png',
@@ -10,14 +12,18 @@ const slides = [
 ---
 
 <section class="bg-wevol-black px-8" data-unidade>
-  <div class="relative aspect-[370/438] overflow-hidden rounded-lg md:aspect-[827/909] lg:aspect-[1216/900]">
-    <img
-      src={slides[0]}
-      alt="Unidade WEVOL"
-      class="size-full object-cover"
-      data-unidade-main
-      data-reveal-img
-    />
+  <div class="relative h-[85vh] overflow-hidden rounded-lg" data-unidade-stage>
+    {/* Stacked slides — only the active one is visible; changes crossfade */}
+    {slides.map((src, i) => (
+      <img
+        src={src}
+        alt="Unidade WEVOL"
+        class="absolute inset-0 size-full object-cover transition-opacity duration-500 ease-out"
+        style={`opacity:${i === 0 ? 1 : 0}`}
+        data-unidade-slide={i}
+        draggable="false"
+      />
+    ))}
 
     <div
       class="absolute bottom-6 left-1/2 hidden w-[min(1048px,90%)] -translate-x-1/2 gap-2 rounded bg-wevol-beige p-2 lg:flex xl:bottom-10"
@@ -27,6 +33,7 @@ const slides = [
           type="button"
           class="group relative aspect-[600/400] min-w-0 flex-1 cursor-pointer overflow-hidden rounded focus-visible:outline-2 focus-visible:outline-wevol-orange"
           aria-label={`Ver foto ${i + 1} da unidade`}
+          data-unidade-idx={i}
           data-unidade-thumb={i === 0 ? 'active' : ''}
         >
           <img src={src} alt="" class="size-full object-cover transition-transform duration-300 group-hover:scale-105" />
@@ -41,17 +48,69 @@ const slides = [
 </section>
 
 <script>
-  const root = document.querySelector('[data-unidade]');
+  const root = document.querySelector<HTMLElement>('[data-unidade]');
   if (root) {
-    const main = root.querySelector<HTMLImageElement>('[data-unidade-main]')!;
+    const stage = root.querySelector<HTMLElement>('[data-unidade-stage]')!;
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-unidade-slide]')];
     const thumbs = [...root.querySelectorAll<HTMLButtonElement>('[data-unidade-thumb]')];
-    thumbs.forEach((thumb) => {
-      thumb.addEventListener('click', () => {
-        thumbs.forEach((t) => t.setAttribute('data-unidade-thumb', ''));
-        thumb.setAttribute('data-unidade-thumb', 'active');
-        const img = thumb.querySelector('img');
-        if (img) main.src = img.src;
-      });
+    const N = slides.length;
+    let current = 0;
+
+    // Crossfade to slide i (wraps around).
+    function show(i: number) {
+      i = ((i % N) + N) % N;
+      if (i === current) return;
+      slides[current].style.opacity = '0';
+      slides[i].style.opacity = '1';
+      thumbs.forEach((t) =>
+        t.setAttribute('data-unidade-thumb', Number(t.dataset.unidadeIdx) === i ? 'active' : '')
+      );
+      current = i;
+    }
+
+    thumbs.forEach((thumb) =>
+      thumb.addEventListener('click', () => show(Number(thumb.dataset.unidadeIdx)))
+    );
+
+    // Swipe/drag to change slide (mobile). Detects horizontal intent so the
+    // page can still scroll vertically; the image does not follow the finger —
+    // on release it fades to the next/previous slide.
+    const THRESHOLD = 40;
+    let downX = 0;
+    let downY = 0;
+    let tracking = false;
+    let horizontal = false;
+    stage.style.touchAction = 'pan-y';
+
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if ((e.target as HTMLElement).closest('[data-unidade-idx]')) return; // thumbnail
+      tracking = true;
+      horizontal = false;
+      downX = e.clientX;
+      downY = e.clientY;
     });
+    stage.addEventListener('pointermove', (e) => {
+      if (!tracking || horizontal) return;
+      const dx = e.clientX - downX;
+      const dy = e.clientY - downY;
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      if (Math.abs(dx) <= Math.abs(dy)) {
+        tracking = false; // vertical gesture → let the page scroll
+        return;
+      }
+      horizontal = true;
+    });
+    const end = (e: PointerEvent) => {
+      if (!tracking) return;
+      tracking = false;
+      if (!horizontal) return;
+      horizontal = false;
+      const dx = e.clientX - downX;
+      if (dx <= -THRESHOLD) show(current + 1);
+      else if (dx >= THRESHOLD) show(current - 1);
+    };
+    stage.addEventListener('pointerup', end);
+    stage.addEventListener('pointercancel', end);
   }
 </script>
