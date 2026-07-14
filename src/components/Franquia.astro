@@ -1,24 +1,27 @@
 ---
-// Franchise band: off-white intro card + photo + animated "Seja um franqueado" card
+// Franchise band: off-white intro card + photo + animated "Seja um franqueado" card.
+// Layout follows Figma: stacked (mobile/tablet), 3-column row on desktop (≥1280).
+// Sizes are flat per Figma — heading 36px, paragraph 20px, CTA 48px (60px desktop).
 ---
 
-<section class="bg-wevol-black py-24">
-  <div class="wv-container grid grid-cols-1 gap-3 lg:grid-cols-3">
+<section class="bg-wevol-black py-20 xl:py-24">
+  <div class="wv-container grid grid-cols-1 gap-3 xl:grid-cols-3">
     <div class="flex min-h-[400px] flex-col justify-center rounded bg-wevol-off-white p-3 xl:h-[500px]">
-      <div class="flex flex-col gap-2 px-6 py-2">
-        <h2 class="wv-title wv-ftype [--fs-min:36] [--fs-max:60] text-wevol-ink" data-reveal="words">
-          <span class="flex items-center gap-5">
+      <div class="flex flex-col gap-6 px-6 py-2">
+        <h2
+          class="wv-title flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-4xl leading-[1.25] tracking-[-0.02em] text-wevol-ink xl:justify-start xl:gap-x-5"
+          data-reveal="words"
+        >
+          <span class="flex items-center gap-x-4 xl:gap-x-5">
             Leve a
-            <img
-              src="icons/wevol-logo-dark.svg"
-              alt="WEVOL"
-              class="h-[0.8em] w-auto translate-y-[0.05em]"
-            />
+            <img src="icons/wevol-logo-dark.svg" alt="WEVOL" class="h-[40px] w-auto" />
           </span>
-          <span class="mt-1 block">para sua cidade.</span>
+          <span class="w-full whitespace-nowrap text-center lg:w-auto xl:w-full xl:text-left">
+            para sua cidade.
+          </span>
         </h2>
         <p
-          class="wv-title wv-ftype [--fs-min:16] [--fs-max:20] mt-2 max-w-[456px] leading-[1.25] tracking-[-0.02em] text-wevol-ink"
+          class="wv-title text-center text-xl leading-[1.25] tracking-[-0.02em] text-wevol-ink xl:text-left"
           data-reveal="lines"
         >
           Conheça a oportunidade de fazer parte da expansão de uma marca que está transformando
@@ -36,7 +39,7 @@
 
     <a
       href="#"
-      class="group relative flex min-h-[400px] flex-col items-end justify-between overflow-hidden rounded bg-gradient-to-l from-wevol-grad-1 to-wevol-grad-2 p-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-wevol-orange xl:h-[500px]"
+      class="group relative flex min-h-[400px] flex-col items-end justify-between gap-6 overflow-hidden rounded bg-gradient-to-l from-wevol-grad-1 to-wevol-grad-2 p-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-wevol-orange lg:min-h-0 lg:flex-row lg:items-center lg:justify-center lg:gap-8 xl:h-[500px] xl:flex-col xl:items-end xl:justify-between"
       data-franquia-cta
     >
       {/* hover: gradient fades into solid WEVOL Orange */}
@@ -45,22 +48,26 @@
         aria-hidden="true"
       ></span>
 
-      <span class="relative block size-20 overflow-hidden" aria-hidden="true">
+      {/* arrow — 40px (mobile/tablet), 80px (desktop); before the label except on the tablet row */}
+      <span
+        class="relative order-1 block size-10 shrink-0 overflow-hidden lg:order-2 xl:order-1 xl:size-20"
+        aria-hidden="true"
+      >
         {/* arrow exits top-right, twin re-enters from bottom-left */}
         <img
           src="icons/franquia-arrow.svg"
           alt=""
-          class="absolute inset-0 size-20 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-[110%] group-hover:translate-y-[-110%]"
+          class="absolute inset-0 size-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-[110%] group-hover:translate-y-[-110%]"
         />
         <img
           src="icons/franquia-arrow.svg"
           alt=""
-          class="absolute inset-0 size-20 translate-x-[-110%] translate-y-[110%] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-0 group-hover:translate-y-0"
+          class="absolute inset-0 size-full translate-x-[-110%] translate-y-[110%] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-0 group-hover:translate-y-0"
         />
       </span>
 
       <span
-        class="wv-title wv-ftype [--fs-min:48] [--fs-max:72] relative w-full text-right leading-none text-wevol-ink transition-colors duration-500 group-hover:text-wevol-off-white"
+        class="wv-title relative order-2 w-full text-right text-5xl leading-none tracking-[-0.02em] text-wevol-ink transition-colors duration-500 group-hover:text-wevol-off-white lg:order-1 lg:w-auto lg:whitespace-nowrap xl:order-2 xl:w-full xl:whitespace-normal xl:text-6xl"
       >
         Seja um franqueado
       </span>
