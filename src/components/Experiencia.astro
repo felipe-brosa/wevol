@@ -63,9 +63,9 @@ const features = [
 
         <ul class="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
-            <li class="flex flex-col gap-6">
+            <li class="flex flex-row items-center gap-4 lg:flex-col lg:items-stretch lg:gap-6">
               <span
-                class="block size-10 text-wevol-orange [&>svg]:block [&>svg]:size-full"
+                class="block size-10 shrink-0 text-wevol-orange [&>svg]:block [&>svg]:size-full"
                 aria-hidden="true"
                 set:html={feature.icon}
               ></span>
