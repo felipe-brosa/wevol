@@ -87,8 +87,17 @@
     line-height: 1.25;
   }
 
-  /* Primary button (button-lg-primary) + interaction states */
+  /*
+    Primary button (button-lg-primary) — "color-flip" hover.
+    An accent fill wipes up from the bottom while the label inverts, echoing the
+    Franquia CTA's motion (same smooth ease). Works on flat markup
+    (<a class="wv-btn-primary">Label</a>) — the fill lives on ::before, so no
+    nested spans are needed.
+  */
   .wv-btn-primary {
+    position: relative;
+    isolation: isolate; /* keep the fill behind the label, not behind the page */
+    overflow: hidden;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -101,14 +110,25 @@
     font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
-    transition:
-      background-color 0.25s ease,
-      color 0.25s ease,
-      transform 0.25s ease;
+    transition: color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .wv-btn-primary:hover {
+  /* the flipping fill — hidden below the button, wipes up on hover/focus */
+  .wv-btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
     background: var(--color-wevol-orange);
+    transform: translateY(101%);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .wv-btn-primary:hover,
+  .wv-btn-primary:focus-visible {
     color: var(--color-wevol-off-white);
+  }
+  .wv-btn-primary:hover::before,
+  .wv-btn-primary:focus-visible::before {
+    transform: translateY(0);
   }
   .wv-btn-primary:active {
     transform: scale(0.97);
@@ -116,6 +136,13 @@
   .wv-btn-primary:focus-visible {
     outline: 2px solid var(--color-wevol-orange);
     outline-offset: 2px;
+  }
+  /* motion-reduced: skip the wipe, keep the colour change instant */
+  @media (prefers-reduced-motion: reduce) {
+    .wv-btn-primary,
+    .wv-btn-primary::before {
+      transition-duration: 0.01ms;
+    }
   }
 
   /* Text links */
