@@ -33,7 +33,8 @@ const icons: Record<string, string> = {
 
   <div class="wv-container relative z-10 flex flex-col items-center py-10 xl:h-[750px] xl:flex-row xl:items-center xl:py-0">
     <div
-      class="flex w-full max-w-[760px] flex-col items-center gap-8 text-center xl:max-w-[520px] xl:items-start xl:text-left 2xl:max-w-[720px]"
+      class="flex w-full max-w-[760px] flex-col items-center gap-8 text-center xl:max-w-[520px] xl:items-start xl:text-left"
+      data-corpo-text
     >
       <h2
         class="wv-title-alt w-full text-5xl leading-none tracking-[-0.02em] text-wevol-off-white 2xl:text-7xl"
@@ -58,7 +59,7 @@ const icons: Record<string, string> = {
         <p data-reveal="lines">Inicie sua experiência personalizada na WEVOL.</p>
       </div>
 
-      <a href="#" class="wv-btn-primary">Conheça a metodologia</a>
+      <a href="#" class="wv-btn-primary" data-label="Conheça a metodologia">Conheça a metodologia</a>
     </div>
 
     <div
@@ -89,3 +90,19 @@ const icons: Record<string, string> = {
     </div>
   </div>
 </section>
+
+<style>
+  /*
+    Desktop large (≥1440): the heading column widens to 720px so each title line
+    fits on one line and reaches past centre, overlapping the va600 image — per
+    Figma node 4188:4068. Done here (not with 2xl:max-w-[720px]) because with the
+    project's custom --breakpoint-2xl (1440) Tailwind emits the 2xl rule before
+    the xl one, so xl:max-w-[520px] wins the cascade at ≥1440. Astro's scoping
+    attribute gives this selector higher specificity, so it wins cleanly.
+  */
+  @media (min-width: 1440px) {
+    [data-corpo-text] {
+      max-width: 720px;
+    }
+  }
+</style>

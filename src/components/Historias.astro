@@ -92,6 +92,18 @@ const VIDEO = 'videos/hero-placeholder.webm';
   .hist-card.is-playing .hist-icon-pause {
     display: block;
   }
+  /* draggable: vertical scroll stays native, horizontal is handled in JS */
+  [data-hist-track] {
+    touch-action: pan-y;
+  }
+  /* while dragging, cards follow the pointer with no easing (instant) */
+  [data-hist-track].is-dragging .hist-card {
+    transition: none;
+  }
+  [data-hist-track].is-dragging,
+  [data-hist-track].is-dragging .hist-card {
+    cursor: grabbing;
+  }
 </style>
 
 <script>
@@ -102,6 +114,7 @@ const VIDEO = 'videos/hero-placeholder.webm';
     const N = cards.length;
     const SCALE = [1, 0.944, 0.889];
     const OPACITY = [1, 0.6, 0.25];
+    const GAP = 12; // constant edge-to-edge gap kept equal between all neighbours
     let busy = false;
 
     // Desktop (≥1280) shows two cards per side, tablet/mobile one.
@@ -117,22 +130,50 @@ const VIDEO = 'videos/hero-placeholder.webm';
       return o;
     });
 
-    function render(teleport?: Set<number>) {
+    const lerp = (a: number, b: number, f: number) => a + (b - a) * f;
+    const scaleAt = (k: number) => SCALE[Math.abs(k)] ?? 0.85;
+    // Continuous scale/opacity so a fractional (dragged) offset interpolates.
+    const scaleFor = (abs: number) => {
+      const i = Math.floor(abs);
+      return lerp(SCALE[i] ?? 0.85, SCALE[i + 1] ?? 0.85, abs - i);
+    };
+    const opacityFor = (abs: number, r: number) => {
+      if (abs >= r + 1) return 0;
+      const i = Math.floor(abs);
+      return lerp(OPACITY[i] ?? 0, OPACITY[i + 1] ?? 0, abs - i);
+    };
+    // Distance between the centres of slot k and k+1 = half of each neighbouring
+    // card (at its own scale) + the fixed gap. Summing these keeps every visible
+    // gap identical — the old constant step bunched the middle because the scaled
+    // side cards are narrower, so their edges drifted further apart.
+    const segLen = (k: number) => {
+      const w = cards[0].offsetWidth;
+      return (w / 2) * scaleAt(k) + GAP + (w / 2) * scaleAt(k + 1);
+    };
+    const slotX = (off: number) => {
+      const sign = Math.sign(off);
+      const abs = Math.abs(off);
+      const whole = Math.floor(abs);
+      let x = 0;
+      for (let k = 0; k < whole; k++) x += segLen(k);
+      x += segLen(whole) * (abs - whole);
+      return sign * x;
+    };
+
+    function render(teleport?: Set<number>, drag = 0) {
       const r = range();
-      const step = cards[0].offsetWidth * 0.972 + 12; // half center + gap + half neighbour
       cards.forEach((card, i) => {
-        const off = curPos[i];
+        const off = curPos[i] + drag;
         const abs = Math.abs(off);
-        const visible = abs <= r;
-        const scale = visible ? SCALE[abs] ?? 0.85 : 0.85;
         if (teleport?.has(i)) card.style.transition = 'none';
-        card.style.transform = `translate(-50%, -50%) translateX(${off * step}px) scale(${scale})`;
-        card.style.opacity = visible ? String(OPACITY[abs] ?? 0) : '0';
-        card.style.zIndex = String(10 - abs);
-        card.style.pointerEvents = visible ? 'auto' : 'none';
-        card.classList.toggle('is-center', off === 0);
-        card.setAttribute('aria-hidden', off === 0 ? 'false' : 'true');
-        if (off !== 0) {
+        card.style.transform = `translate(-50%, -50%) translateX(${slotX(off)}px) scale(${scaleFor(abs)})`;
+        card.style.opacity = String(opacityFor(abs, r));
+        card.style.zIndex = String(10 - Math.round(abs));
+        card.style.pointerEvents = abs <= r ? 'auto' : 'none';
+        const centered = !drag && abs < 0.5;
+        card.classList.toggle('is-center', centered);
+        card.setAttribute('aria-hidden', centered ? 'false' : 'true');
+        if (!centered) {
           const v = card.querySelector('video');
           if (v && !v.paused) v.pause();
           card.classList.remove('is-playing');
@@ -184,8 +225,22 @@ const VIDEO = 'videos/hero-placeholder.webm';
       return true;
     }
 
+    // --- drag / swipe state (shared with the click guard) ---
+    const SETTLE_FRACTION = 0.18; // portion of a slot to drag before it advances
+    let downX = 0;
+    let downY = 0;
+    let tracking = false;
+    let horizontal = false;
+    let dragged = false;
+    let dragFrac = 0;
+    const stepPx = () => segLen(0) || 1;
+
     cards.forEach((card, i) => {
       card.addEventListener('click', () => {
+        if (dragged) {
+          dragged = false; // a drag just ended → swallow the synthetic click
+          return;
+        }
         if (goTo(i)) return; // side card (or a move is already in progress)
         // centre card: toggle playback
         const v = card.querySelector('video');
@@ -199,6 +254,64 @@ const VIDEO = 'videos/hero-placeholder.webm';
         }
       });
     });
+
+    // Drag/swipe on the ribbon: follow the pointer, then snap to prev/next.
+    // Works on desktop, tablet and mobile; horizontal intent is detected first
+    // so vertical page scroll is preserved.
+    track.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (busy) return;
+      tracking = true;
+      horizontal = false;
+      dragged = false;
+      dragFrac = 0;
+      downX = e.clientX;
+      downY = e.clientY;
+      document.body.style.userSelect = 'none'; // stop grab-selecting on desktop
+    });
+    track.addEventListener('pointermove', (e) => {
+      if (!tracking) return;
+      const dx = e.clientX - downX;
+      const dy = e.clientY - downY;
+      if (!horizontal) {
+        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+        if (Math.abs(dx) <= Math.abs(dy)) {
+          tracking = false; // vertical gesture → let the page scroll
+          document.body.style.userSelect = '';
+          return;
+        }
+        horizontal = true;
+        dragged = true;
+        window.getSelection?.()?.removeAllRanges();
+        track.classList.add('is-dragging');
+        try { track.setPointerCapture(e.pointerId); } catch {}
+      }
+      dragFrac = dx / stepPx();
+      render(undefined, dragFrac);
+    });
+    const endDrag = (e: PointerEvent) => {
+      document.body.style.userSelect = '';
+      if (!tracking) return;
+      tracking = false;
+      if (!horizontal) return;
+      horizontal = false;
+      track.classList.remove('is-dragging');
+      try { track.releasePointerCapture(e.pointerId); } catch {}
+      let settle = 0;
+      if (dragFrac >= SETTLE_FRACTION) settle = 1;
+      else if (dragFrac <= -SETTLE_FRACTION) settle = -1;
+      if (settle === 0) {
+        render(); // not far enough → ease back to the current card
+        return;
+      }
+      // The card that should become centre currently sits at off = -settle.
+      const target = curPos.findIndex((p) => p === -settle);
+      if (target >= 0) goTo(target);
+      else render();
+    };
+    track.addEventListener('pointerup', endDrag);
+    track.addEventListener('pointercancel', endDrag);
+    track.addEventListener('dragstart', (e) => e.preventDefault());
 
     const all = () => new Set(cards.map((_, i) => i));
     render(all()); // initial placement, no animation

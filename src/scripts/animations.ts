@@ -10,12 +10,18 @@ if (import.meta.env.DEV) {
   (window as unknown as Record<string, unknown>).__wevolGsap = { gsap, ScrollTrigger };
 }
 
+let lenis: Lenis | null = null;
+
 function initSmoothScroll() {
-  const lenis = new Lenis({ anchors: true });
+  lenis = new Lenis({ anchors: true });
   // keep ScrollTrigger in sync with Lenis and drive Lenis from GSAP's ticker
   lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.add((time) => lenis!.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
+  // exposed so the inline loader failsafe (Layout.astro) can release the scroll
+  // lock if it ever has to dismiss the loader itself
+  (window as unknown as Record<string, unknown>).__wvLenis = lenis;
+  return lenis;
 }
 
 const EASE = 'power4.out';
@@ -52,16 +58,13 @@ function maskedBlockReveal(el: HTMLElement): gsap.core.Tween {
   });
 }
 
-function init() {
+/**
+ * Scroll-triggered reveals (titles, paragraphs, images). Called *after* the
+ * entry loader finishes, so the hero's in-view elements animate in as the
+ * page's entrance rather than firing under the loader.
+ */
+function initReveals() {
   const { words, lines, images } = revealTargets();
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduceMotion) {
-    images.forEach((img) => (img.style.opacity = '1'));
-    return;
-  }
-
-  initSmoothScroll();
 
   document.fonts.ready.then(() => {
     // Titles: slide-in from bottom, masked underneath, split by word
@@ -130,6 +133,136 @@ function init() {
   });
 }
 
+function showImagesStatic() {
+  gsap.utils.toArray<HTMLElement>('[data-reveal-img]').forEach((img) => (img.style.opacity = '1'));
+}
+
+/**
+ * Resolves once the *visible* hero video can play (readyState ≥ 3). Resolves
+ * immediately if it's already buffered (cache), and also on `error` so a failed
+ * video never traps the loader. The 5s cap lives in playLoader().
+ */
+function heroVideoReady(): Promise<void> {
+  return new Promise((resolve) => {
+    const desktop = window.matchMedia('(min-width: 768px)').matches;
+    const video = document.querySelector<HTMLVideoElement>(
+      `video[data-hero-video="${desktop ? 'desktop' : 'mobile'}"]`
+    );
+    if (!video || video.readyState >= 3) return resolve();
+    const done = () => {
+      video.removeEventListener('canplay', done);
+      video.removeEventListener('error', done);
+      resolve();
+    };
+    video.addEventListener('canplay', done, { once: true });
+    video.addEventListener('error', done, { once: true });
+  });
+}
+
+function lockScroll() {
+  lenis?.stop();
+  document.documentElement.style.overflow = 'hidden';
+}
+function unlockScroll() {
+  lenis?.start();
+  document.documentElement.style.overflow = '';
+}
+
+/**
+ * Entry loader choreography. The ring (trim-path) always fills gradually over at
+ * least FILL seconds — even when the video is cached and ready instantly — then
+ * completes to 100% once loading finishes (or the 5s cap is hit), and finally the
+ * three marks fade and the black panel slides up to reveal the running video.
+ *
+ * The ring is driven through a proxy (`prog`) whose onUpdate writes
+ * stroke-dashoffset directly: animating the fractional dash value with GSAP
+ * itself was unreliable (it jumped near the end instead of filling smoothly).
+ */
+function playLoader(loader: HTMLElement): Promise<void> {
+  return new Promise((resolve) => {
+    const mark = loader.querySelector<SVGElement>('.wv-loader__mark')!;
+    const ring = loader.querySelector<SVGCircleElement>('.wv-loader__ring')!;
+    const text = loader.querySelector<HTMLElement>('.wv-loader__text')!;
+    const FILL = 1.5; // s — the ring never fills faster than this (guaranteed minimum)
+    const CAP = 5000; // ms — hard cap if the video never becomes ready
+
+    const prog = { v: 0 }; // 0 → 1, mapped to the ring's dash offset (1 − v)
+    const draw = () => (ring.style.strokeDashoffset = String(1 - prog.v));
+    draw();
+
+    // fills smoothly toward 90% over FILL seconds (indeterminate — real video
+    // byte-progress isn't reliable); completes to 100% when loading finishes.
+    const fill = gsap.to(prog, { v: 0.9, duration: FILL, ease: 'power1.inOut', onUpdate: draw });
+
+    const finish = () => {
+      gsap.to(prog, {
+        v: 1,
+        duration: 0.4,
+        ease: 'power2.inOut',
+        onUpdate: draw,
+        onComplete: () => {
+          const tl = gsap.timeline({
+            onComplete: () => {
+              loader.style.display = 'none';
+              resolve();
+            },
+          });
+          tl.to([mark, text], { opacity: 0, duration: 0.4, ease: 'power2.out' }).to(
+            loader,
+            { yPercent: -100, duration: 0.9, ease: 'power4.inOut' },
+            '-=0.05'
+          );
+        },
+      });
+    };
+
+    const cap = new Promise<void>((r) => window.setTimeout(r, CAP));
+
+    // Wait for the video (or the cap), but never finish before the minimum fill
+    // has played out — otherwise a cached video makes the ring pop and vanish.
+    Promise.race([heroVideoReady(), cap]).then(() => {
+      if (fill.progress() < 1) fill.eventCallback('onComplete', finish);
+      else finish();
+    });
+  });
+}
+
+function boot() {
+  const loader = document.getElementById('wv-loader');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduceMotion) {
+    // no entrance animation: dismiss the loader and show content statically
+    if (loader) loader.style.display = 'none';
+    document.documentElement.style.overflow = '';
+    showImagesStatic();
+    initChips();
+    return;
+  }
+
+  initSmoothScroll();
+  initChips(); // below the fold — safe to set up while the loader plays
+
+  if (!loader) {
+    // safety: no loader in the DOM → behave as before
+    initReveals();
+    return;
+  }
+
+  // pin the hero at the top and lock scroll; hide the hero's reveal targets so
+  // the slide reveals only the running video (they animate in right after).
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
+  document.documentElement.classList.add('wv-loading');
+  lockScroll();
+
+  playLoader(loader).then(() => {
+    document.documentElement.classList.remove('wv-loading');
+    initReveals(); // hero is in view now → its titles/paragraphs animate in
+    unlockScroll();
+  });
+}
+
 /**
  * CorpoUnico status chips over the va600 screen.
  * Desktop (≥1280): the 4 chips float with a gentle, desynchronized wiggle.
@@ -177,5 +310,4 @@ function initChips() {
   });
 }
 
-init();
-initChips();
+boot();

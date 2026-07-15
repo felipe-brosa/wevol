@@ -116,6 +116,7 @@ const slides = [
       horizontal = false;
       downX = e.clientX;
       downY = e.clientY;
+      document.body.style.userSelect = 'none'; // stop grab-selecting on desktop
     });
     stage.addEventListener('pointermove', (e) => {
       if (!tracking || horizontal) return;
@@ -124,11 +125,14 @@ const slides = [
       if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
       if (Math.abs(dx) <= Math.abs(dy)) {
         tracking = false; // vertical gesture → let the page scroll
+        document.body.style.userSelect = '';
         return;
       }
       horizontal = true;
+      window.getSelection?.()?.removeAllRanges();
     });
     const end = (e: PointerEvent) => {
+      document.body.style.userSelect = '';
       if (!tracking) return;
       tracking = false;
       if (!horizontal) return;
@@ -139,5 +143,6 @@ const slides = [
     };
     stage.addEventListener('pointerup', end);
     stage.addEventListener('pointercancel', end);
+    stage.addEventListener('dragstart', (e) => e.preventDefault());
   }
 </script>
